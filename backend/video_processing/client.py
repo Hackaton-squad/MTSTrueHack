@@ -6,9 +6,8 @@ from furl import furl
 
 def main_single(vid_path, server_url):
     predict_url = str(furl(server_url) / "process")
-    for i in range(5):
-        r = requests.post(predict_url, json={'url': vid_path + f"{i}"})
-        print(r.status_code)
+    r = requests.post(predict_url, json={'url': vid_path})
+    print(r.status_code)
 
 
 if __name__ == "__main__":

@@ -6,14 +6,15 @@ from flask import Flask, request, jsonify
 import multiprocessing as mp
 from multiprocessing import current_process
 from video import load_video, process_by_frames
+import os
+import uuid
+from model import Model, Model2
 
 app = Flask(__name__, static_url_path="")
 queue = mp.Queue()
 
 # Check that process is running
 # back_queue = mp.Queue()
-
-from model import Model, Model2
 
 
 def callback(timestamp, caption):
@@ -26,9 +27,12 @@ def process(queue):
 
     while url := queue.get():
         time.sleep(5)
-        path = url + ".mp4"
-        load_video(url, path)
-        process_by_frames(path, callback=callback, predict=model.predict_caption)
+
+        filename = str(uuid.uuid4())
+
+        load_video(url, filename)
+        process_by_frames(filename, callback=callback, predict=model.predict_caption)
+        os.remove(filename)
 
         # convert video to images
         # call model
