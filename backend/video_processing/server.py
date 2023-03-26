@@ -33,7 +33,9 @@ def process(queue):
         filename = str(uuid.uuid4())
 
         load_video(url, filename)
-        process_by_frames(filename, callback=callback, predict=model.predict_caption)
+
+        # TODO - while loading video also load subtitles, then pass them to subtitle_path
+        process_by_frames(filename, callback=callback, predict=model.predict_caption, subtitle_path=None)
         os.remove(filename)
 
         # convert video to images
