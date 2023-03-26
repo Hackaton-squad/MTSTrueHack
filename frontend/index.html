@@ -12,30 +12,37 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <link href="https://vjs.zencdn.net/8.0.4/video-js.css" rel="stylesheet" />
+    <link href="https://vjs.zencdn.net/8.0.4/video-js.css" rel="stylesheet"/>
 
     <title>Hello, world!</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('get_video_button').addEventListener('click', function (e) {
+                fetch('/getAudio').then(r => r.json()).then(r => {
+                    alert(r.created);
+                })
+            });
+            let video = document.getElementById("video");
+            video.addEventListener('timeupdate', function() {
+                console.log(this.currentTime);
+                if(this.currentTime > 3.0 && this.currentTime < 3.250) {
+                    //video.muted = true;
+                    fetch('/getAudio').then(r => r.json()).then(r => {
+                        alert(r.created);
+                    });
+                }
+                document.getElementById("timer").innerHTML = this.currentTime;
+            });
+        });
+    </script>
 </head>
 <body>
-<button id="text_to_speech_button">Кнопка с текстом</button>
-<!--<video-->
-<!--        id="videoPlayer"-->
-<!--        class="video-js"-->
-<!--        controls-->
-<!--        preload="auto"-->
-<!--        width="640"-->
-<!--        height="264"-->
-<!--        poster="Cat03.jpg"-->
-<!--        data-setup="{}"-->
-<!--&gt;-->
-<!--    <source src="https://www.f5.com/c/landing/cms-documentation/mp4-video-player" type="video/mp4"/>-->
-<!--    <p class="vjs-no-js">-->
-<!--        To view this video please enable JavaScript, and consider upgrading to a-->
-<!--        web browser that-->
-<!--        <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>-->
-<!--    </p>-->
-<!--</video>-->
-
+<button id="get_video_button" onclick="">Получить видео</button>
+<input id="">
+<video id="video" preload="auto" loop autoplay controls>
+    <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type='video/mp4' />
+</video>
+<div id="timer"></div>
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -47,42 +54,6 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
-<script>
-    const fetch = require('node-fetch');
-    const api_key = 'AQVN1Bkw_G0XP1HC1DKCj9mBNBPGubffIsFINtEM';
-
-    const { URLSearchParams } = require('url');
-    const fs = require('fs');
-
-    document.getElementById("text_to_speech_button").onclick = function() {
-        const params = new URLSearchParams();
-        const text = 'Добрый день, у нас новая акция! Пицца Добряк сегодня за полцены, закажите по телефону 222. Уже ждем вашего заказа :) '
-
-        params.append('text', text);
-        params.append('voice', 'zahar');
-        params.append('emotion', 'good');
-        params.append('lang', 'ru-RU');
-        params.append('speed', '1.0');
-        params.append('format', 'oggopus');
-
-        fetch('https://tts.api.cloud.yandex.net/speech/v1/tts:synthesize', {
-            method: 'post',
-            body: params,
-            headers: {
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': 'Api-Key ' + api_key,
-            },
-        })
-            .then(res => {
-                console.log(res);
-                // return res.json();
-                const dest = fs.createWriteStream('./octocat.ogg');
-                res.body.pipe(dest);
-            })
-            .catch(err => console.error(err));
-
-    }
-</script>
 </body>
 
 <script src="https://vjs.zencdn.net/8.0.4/video.min.js"></script>
