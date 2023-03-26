@@ -1,0 +1,7 @@
+version: "3"
+
+services:
+  video_processing:
+    build: video_processing
+    ports:
+      - "8081:8081"
