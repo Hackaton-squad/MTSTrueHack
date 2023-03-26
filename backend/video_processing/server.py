@@ -26,13 +26,10 @@ def callback(timestamp, caption):
 
 
 def process(queue):
-    time.sleep(5)
-    barrier.wait()
     model = Model()
+    barrier.wait()
 
     while url := queue.get():
-        time.sleep(5)
-
         filename = str(uuid.uuid4())
 
         load_video(url, filename)
