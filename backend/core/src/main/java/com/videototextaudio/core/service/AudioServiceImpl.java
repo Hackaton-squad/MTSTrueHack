@@ -25,7 +25,7 @@ public class AudioServiceImpl {
 
     public List<Audio> getAudios(GetAudioRequest request) {
         if (Processing.NOT_PROCESSED.equals(videoProcessingRepository.get(request.getUrl())))
-            videoManager.sendVideoToConversation(request.getUrl());
+            videoManager.sendVideoToConversation(request.getUrl(), request.getSrturl());
 
         var allTimestamps = audioRepository.getAllTimestamps(request.getUrl());
 

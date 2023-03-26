@@ -11,6 +11,8 @@ public class GetAudioRequest {
     @NotNull
     private String url;
     @NotNull
+    private String srturl;
+    @NotNull
     private long start;
     @NotNull
     private long end;

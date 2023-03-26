@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class VideoManagerImpl {
 
-    public void sendVideoToConversation(String url){
+    public void sendVideoToConversation(String url, String srturl){
         //TODO
         new Thread(this::sendVideo);
     }

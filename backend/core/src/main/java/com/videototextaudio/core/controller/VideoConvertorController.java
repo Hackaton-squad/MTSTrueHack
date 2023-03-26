@@ -11,9 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.stream.Collectors;
@@ -26,8 +24,12 @@ public class VideoConvertorController {
     private final AudioServiceImpl audioService;
 
     @Operation(summary = "Get text from video")
-    @PostMapping(value = "/download", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ListAudioView getAudios(@Valid @RequestBody GetAudioRequest request) {
+    @GetMapping(value = "/download")
+    public ListAudioView getAudios(@RequestParam String url,
+                                   @RequestParam String srturl,
+                                   @RequestParam long start,
+                                   @RequestParam long end) {
+        var request = GetAudioRequest.builder().url(url).srturl(srturl).start(start).end(end).build();
         log.info("Request for getting audio: {}", request);
         return ListAudioView.builder()
                 .audios(audioService.getAudios(request).stream()

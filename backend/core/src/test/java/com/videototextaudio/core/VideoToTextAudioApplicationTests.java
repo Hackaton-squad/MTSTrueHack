@@ -1,7 +1,6 @@
 package com.videototextaudio.core;
 
 import com.videototextaudio.core.controller.VideoConvertorController;
-import com.videototextaudio.core.presentatioon.request.GetAudioRequest;
 import com.videototextaudio.core.presentatioon.request.SetAudioRequest;
 import com.videototextaudio.core.repository.AudioRepositoryImpl;
 import com.videototextaudio.core.repository.VideoProcessingRepositoryImpl;
@@ -35,11 +34,7 @@ public class VideoToTextAudioApplicationTests {
 
         final String URL = "http://getExistingAudiosOne";
         generate(URL);
-        var audios = controller.getAudios(GetAudioRequest.builder()
-                .url(URL)
-                .start(3)
-                .end(4)
-                .build());
+        var audios = controller.getAudios(URL, URL, 3, 4);
         Assertions.assertEquals(0, audios.getAudios().get(0).getStart());
         Assertions.assertEquals(1, audios.getAudios().size());
 
@@ -54,11 +49,7 @@ public class VideoToTextAudioApplicationTests {
 
         final String URL = "http://getExistingAudiosMany";
         generate(URL);
-        var audios = controller.getAudios(GetAudioRequest.builder()
-                .url(URL)
-                .start(6)
-                .end(16)
-                .build());
+        var audios = controller.getAudios(URL, URL, 6, 16);
         Assertions.assertEquals(5, audios.getAudios().get(0).getStart());
         Assertions.assertEquals(3, audios.getAudios().size());
 
@@ -73,11 +64,7 @@ public class VideoToTextAudioApplicationTests {
 
         final String URL = "http://getRightEquals";
         generate(URL);
-        var audios = controller.getAudios(GetAudioRequest.builder()
-                .url(URL)
-                .start(6)
-                .end(15)
-                .build());
+        var audios = controller.getAudios(URL, URL, 6, 15);
         Assertions.assertEquals(5, audios.getAudios().get(0).getStart());
         Assertions.assertEquals(2, audios.getAudios().size());
 
@@ -92,11 +79,7 @@ public class VideoToTextAudioApplicationTests {
 
         final String URL = "http://getLeftEquals";
         generate(URL);
-        var audios = controller.getAudios(GetAudioRequest.builder()
-                .url(URL)
-                .start(5)
-                .end(16)
-                .build());
+        var audios = controller.getAudios(URL, URL, 5, 16);
         Assertions.assertEquals(5, audios.getAudios().get(0).getStart());
         Assertions.assertEquals(3, audios.getAudios().size());
 
@@ -111,11 +94,7 @@ public class VideoToTextAudioApplicationTests {
 
         final String URL = "http://getMoreThanRightBorder";
         generate(URL);
-        var audios = controller.getAudios(GetAudioRequest.builder()
-                .url(URL)
-                .start(3)
-                .end(120)
-                .build());
+        var audios = controller.getAudios(URL, URL, 3, 120);
         Assertions.assertEquals(0, audios.getAudios().get(0).getStart());
         Assertions.assertEquals(20, audios.getAudios().size());
 
@@ -130,13 +109,25 @@ public class VideoToTextAudioApplicationTests {
 
         final String URL = "http://getLessThanLeftBorder";
         generate(URL);
-        var audios = controller.getAudios(GetAudioRequest.builder()
-                .url(URL)
-                .start(-1)
-                .end(1)
-                .build());
+        var audios = controller.getAudios(URL, URL, -1, 1);
         Assertions.assertEquals(0, audios.getAudios().get(0).getStart());
         Assertions.assertEquals(1, audios.getAudios().size());
+
+        System.out.println(System.currentTimeMillis() - l);
+        System.out.println("------------------------------------------");
+    }
+
+    @Test
+    public void getAll() {
+        long l = System.currentTimeMillis();
+        System.out.println("getAll()");
+
+        final String URL = "http://getAll";
+        generate(URL);
+
+        var audios = controller.getAudios(URL, URL, -1, -1);
+        Assertions.assertEquals(0, audios.getAudios().get(0).getStart());
+        Assertions.assertEquals(20, audios.getAudios().size());
 
         System.out.println(System.currentTimeMillis() - l);
         System.out.println("------------------------------------------");
