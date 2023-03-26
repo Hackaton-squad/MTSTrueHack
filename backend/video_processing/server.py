@@ -11,7 +11,10 @@ import uuid
 from model import Model, Model2
 
 app = Flask(__name__, static_url_path="")
+n_proc = 2
+processes = []
 queue = mp.Queue()
+barrier = mp.Barrier(n_proc + 1)
 
 # Check that process is running
 # back_queue = mp.Queue()
@@ -23,6 +26,8 @@ def callback(timestamp, caption):
 
 
 def process(queue):
+    time.sleep(5)
+    barrier.wait()
     model = Model()
 
     while url := queue.get():
@@ -61,9 +66,6 @@ def close_running_processes():
     print("Processes complete, finishing...")
 
 
-n_proc = 2
-processes = []
-
 if __name__ == '__main__':
     atexit.register(close_running_processes)
     for _ in range(n_proc):
@@ -71,4 +73,5 @@ if __name__ == '__main__':
         proc = mp.Process(target=process, args=[queue])
         processes.append(proc)
         proc.start()
+    barrier.wait()
     app.run(host='0.0.0.0', port=8081)
