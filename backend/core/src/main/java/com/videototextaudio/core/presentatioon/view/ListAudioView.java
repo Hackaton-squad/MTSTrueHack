@@ -1,14 +1,13 @@
 package com.videototextaudio.core.presentatioon.view;
 
 import lombok.Builder;
-import lombok.Getter;
 import lombok.Value;
 
-import java.util.List;
+import java.util.HashMap;
 
 @Value
 @Builder
 public class ListAudioView {
-    List<AudioView> audios;
+    HashMap<Long, String> audios;
     String videoProcessingStatus;
 }

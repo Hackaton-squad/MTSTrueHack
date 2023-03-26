@@ -1,5 +1,6 @@
 package com.videototextaudio.core.controller;
 
+import com.videototextaudio.core.entity.Audio;
 import com.videototextaudio.core.presentatioon.request.GetAudioRequest;
 import com.videototextaudio.core.presentatioon.request.SetAudioRequest;
 import com.videototextaudio.core.presentatioon.request.SetProcessingRequest;
@@ -14,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 
 @RestController
@@ -32,9 +34,7 @@ public class VideoConvertorController {
         var request = GetAudioRequest.builder().url(url).srturl(srturl).start(start).end(end).build();
         log.info("Request for getting audio: {}", request);
         return ListAudioView.builder()
-                .audios(audioService.getAudios(request).stream()
-                        .map(v -> new AudioView(v.getStart(), v.getText()))
-                        .collect(Collectors.toList()))
+                .audios(audioService.getAudios(request).stream().collect(Collectors.toMap(Audio::getStart, Audio::getText, (x, y) -> y, LinkedHashMap::new)))
                 .videoProcessingStatus(audioService.getAudioStatus(request.getUrl()).name())
                 .build();
     }

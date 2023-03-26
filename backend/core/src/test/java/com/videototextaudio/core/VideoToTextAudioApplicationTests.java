@@ -35,7 +35,7 @@ public class VideoToTextAudioApplicationTests {
         final String URL = "http://getExistingAudiosOne";
         generate(URL);
         var audios = controller.getAudios(URL, URL, 3, 4);
-        Assertions.assertEquals(0, audios.getAudios().get(0).getStart());
+        Assertions.assertEquals(0, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(1, audios.getAudios().size());
 
         System.out.println(System.currentTimeMillis() - l);
@@ -50,7 +50,7 @@ public class VideoToTextAudioApplicationTests {
         final String URL = "http://getExistingAudiosMany";
         generate(URL);
         var audios = controller.getAudios(URL, URL, 6, 16);
-        Assertions.assertEquals(5, audios.getAudios().get(0).getStart());
+        Assertions.assertEquals(5, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(3, audios.getAudios().size());
 
         System.out.println(System.currentTimeMillis() - l);
@@ -65,7 +65,7 @@ public class VideoToTextAudioApplicationTests {
         final String URL = "http://getRightEquals";
         generate(URL);
         var audios = controller.getAudios(URL, URL, 6, 15);
-        Assertions.assertEquals(5, audios.getAudios().get(0).getStart());
+        Assertions.assertEquals(5, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(2, audios.getAudios().size());
 
         System.out.println(System.currentTimeMillis() - l);
@@ -80,7 +80,7 @@ public class VideoToTextAudioApplicationTests {
         final String URL = "http://getLeftEquals";
         generate(URL);
         var audios = controller.getAudios(URL, URL, 5, 16);
-        Assertions.assertEquals(5, audios.getAudios().get(0).getStart());
+        Assertions.assertEquals(5, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(3, audios.getAudios().size());
 
         System.out.println(System.currentTimeMillis() - l);
@@ -95,7 +95,7 @@ public class VideoToTextAudioApplicationTests {
         final String URL = "http://getMoreThanRightBorder";
         generate(URL);
         var audios = controller.getAudios(URL, URL, 3, 120);
-        Assertions.assertEquals(0, audios.getAudios().get(0).getStart());
+        Assertions.assertEquals(0, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(20, audios.getAudios().size());
 
         System.out.println(System.currentTimeMillis() - l);
@@ -110,7 +110,7 @@ public class VideoToTextAudioApplicationTests {
         final String URL = "http://getLessThanLeftBorder";
         generate(URL);
         var audios = controller.getAudios(URL, URL, -1, 1);
-        Assertions.assertEquals(0, audios.getAudios().get(0).getStart());
+        Assertions.assertEquals(0, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(1, audios.getAudios().size());
 
         System.out.println(System.currentTimeMillis() - l);
@@ -126,7 +126,7 @@ public class VideoToTextAudioApplicationTests {
         generate(URL);
 
         var audios = controller.getAudios(URL, URL, -1, -1);
-        Assertions.assertEquals(0, audios.getAudios().get(0).getStart());
+        Assertions.assertEquals(0, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(20, audios.getAudios().size());
 
         System.out.println(System.currentTimeMillis() - l);
@@ -158,6 +158,12 @@ public class VideoToTextAudioApplicationTests {
         System.out.println(System.currentTimeMillis() - l);
 
         System.out.println("------------------------------------------");
+    }
+
+    @Test
+    public void fill() {
+        final String url = "http://generate";
+        generate(url);
     }
 
     private void generate(String url) {
