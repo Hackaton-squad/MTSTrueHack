@@ -1,19 +1,14 @@
-import requests
 import cv2
 from PIL import Image
 import pysrt
-
-INTERVAL_IN_SECONDS = 20
-SUBTITLE_GAP_SECONDS = 1
+from model import PROMPT
 
 
-def load_video(link: str, path: str):
-    r = requests.get(link, stream=True)
-
-    with open(path, 'wb') as f:
-        for chunk in r.iter_content(chunk_size=1024 * 1024):
-            if chunk:
-                f.write(chunk)
+INTERVAL_IN_SECONDS = 10
+MAX_INTERVAL_IN_SECONDS = 70
+SUBTITLE_GAP_SECONDS_START = 1.0
+SUBTITLE_GAP_SECONDS_END = 0.5
+SUBTITLE_GAP_SECONDS_LEN = 0.5
 
 
 def process_by_frames(path: str, callback, predict, subtitle_path=None):
@@ -31,21 +26,30 @@ def process_by_frames(path: str, callback, predict, subtitle_path=None):
         intervals = subtitle_intervals(subtitle_path)
 
     currentframe = 0
+    previousframe = 0
     while True:
         ret, frame = cam.read()
         if ret:
-            if currentframe % (int(fps) * INTERVAL_IN_SECONDS) == 0:
+
+            if currentframe - previousframe > INTERVAL_IN_SECONDS * int(fps):
                 img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 image = Image.fromarray(img)
                 if image.mode != "RGB":
                     image = image.convert(mode="RGB")
 
-                timestamp = int(currentframe / fps)
+                timestamp = int(currentframe / fps) - SUBTITLE_GAP_SECONDS_LEN
+
                 if belongs_to_interval(timestamp, intervals):
+                    #  and currentframe - previousframe < MAX_INTERVAL_IN_SECONDS * int(fps):
+                    currentframe += 1
                     continue
 
                 caption = predict(image)
-                callback(timestamp, caption)
+                if len(caption) > 0:
+                    caption = caption[0]
+                if len(caption) > len(PROMPT):
+                    callback(timestamp, caption[len(PROMPT):])
+                previousframe = currentframe
 
             currentframe += 1
         else:
@@ -78,5 +82,5 @@ def subtitle_intervals(subtitle_path: str) -> [[int, int]]:
     for sub in subs:
         start = to_second(sub.start.to_time())
         end = to_second(sub.end.to_time())
-        timestamps.append([start - SUBTITLE_GAP_SECONDS, end + SUBTITLE_GAP_SECONDS])
-
+        timestamps.append([start - SUBTITLE_GAP_SECONDS_START, end + SUBTITLE_GAP_SECONDS_END])
+    return timestamps
