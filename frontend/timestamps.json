@@ -1,0 +1,9 @@
+{
+  "audios": [
+    {
+      "start": 0,
+      "text": "Джон пошел гулять с друзьями."
+    }
+  ],
+  "videoProcessingStatus": "string"
+}

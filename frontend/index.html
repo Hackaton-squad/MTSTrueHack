@@ -17,9 +17,10 @@
     <title>Hello, world!</title>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            let input = document.getElementById('url_input')
             document.getElementById('get_video_button').addEventListener('click', function (e) {
-                fetch('/getAudio').then(r => r.json()).then(r => {
-                    alert(r.created);
+                fetch('/getAudios?url=' + input.value).then(r => r.json()).then(r => {
+                    alert(r);
                 })
             });
             let video = document.getElementById("video");
@@ -38,7 +39,7 @@
 </head>
 <body>
 <button id="get_video_button" onclick="">Получить видео</button>
-<input id="">
+<input id="url_input">
 <video id="video" preload="auto" loop autoplay controls>
     <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type='video/mp4' />
 </video>
