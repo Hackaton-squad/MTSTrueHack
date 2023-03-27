@@ -2,18 +2,22 @@ import requests
 import cv2
 from PIL import Image
 import pysrt
+from exceptions import RetryableException
 
 INTERVAL_IN_SECONDS = 20
 SUBTITLE_GAP_SECONDS = 1
 
 
 def load_video(link: str, path: str):
-    r = requests.get(link, stream=True)
+    try:
+        r = requests.get(link, stream=True)
 
-    with open(path, 'wb') as f:
-        for chunk in r.iter_content(chunk_size=1024 * 1024):
-            if chunk:
-                f.write(chunk)
+        with open(path, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=1024 * 1024):
+                if chunk:
+                    f.write(chunk)
+    except Exception as exc:
+        raise RetryableException("Error while loading video") from exc
 
 
 def process_by_frames(path: str, callback, predict, subtitle_path=None):
