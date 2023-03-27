@@ -1,0 +1,6 @@
+FROM gradle:7.3.3-jdk17 as jre
+WORKDIR /app
+COPY . .
+RUN gradle clean build
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "/app/build/libs/video-to-text-audio-0.0.1-SNAPSHOT.jar"]

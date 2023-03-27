@@ -7,6 +7,8 @@ RUN mkdir /app
 WORKDIR /app
 
 COPY server.py .
+COPY exceptions.py .
+COPY video.py .
 #COPY vgg16.pt .
 
 #ENTRYPOINT ["python3", "server.py"]

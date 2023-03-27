@@ -1,0 +1,18 @@
+server:
+  port: 8080
+  servlet:
+    context-path: ${SERVLET_CONTEXT_PATH:/}
+
+tts:
+  speed: 1000
+
+spring:
+  redis:
+#    host: ${SPRING_REDIS_HOST:localhost}
+    host: ${SPRING_REDIS_HOST:redis}
+    port: ${SPRING_REDIS_PORT:6379}
+
+  data:
+    redis:
+      repositories:
+        enabled: false
