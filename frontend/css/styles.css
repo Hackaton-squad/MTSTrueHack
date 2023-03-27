@@ -2208,9 +2208,8 @@ progress {
 .form-control:focus {
   color: #212529;
   background-color: #fff;
-  border-color: #8ddece;
+  border-color: #f53838;
   outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(33, 33, 33, 0.25);
 }
 .form-control::-webkit-date-and-time-value {
   height: 1.5em;
@@ -11510,6 +11509,29 @@ html {
   font-size: larger;
 }
 
+.input-group-footer {
+  padding: 2em 10em 2em;
+}
+
+.btn-primary-footer {
+  border-radius: 0 10px 10px 0;
+}
+
+.panel-footer.panel-custom {
+  background: rgba(3, 3, 3, 0.9);
+  color: rgba(3, 3, 3, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel-footer-text {
+  font-size: x-large;
+  color: white;
+  font-weight: bold;
+  padding-top: 1em;
+}
 .bg {
   background-image: url("/frontend/assets/img/mustheadbckrnd.jpeg");
 
