@@ -5384,8 +5384,8 @@ textarea.form-control-lg {
 
 .btn-close {
   box-sizing: content-box;
-  width: 0.5em;
-  height: 0.5em;
+  width: 0.8em;
+  height: 0.8em;
   padding: 0.25em 0.25em;
   color: #ffffff;
   border: 0;
@@ -11502,6 +11502,12 @@ html {
 
 .description {
   color: ghostwhite;
+  font-size: larger;
+}
+
+.btn-primary {
+  width: 20em;
+  font-size: larger;
 }
 
 .bg {
