@@ -4,8 +4,9 @@ import com.videototextaudio.core.entity.Audio;
 import com.videototextaudio.core.presentatioon.request.GetAudioRequest;
 import com.videototextaudio.core.presentatioon.request.SetAudioRequest;
 import com.videototextaudio.core.presentatioon.request.SetProcessingRequest;
-import com.videototextaudio.core.presentatioon.view.AudioView;
+import com.videototextaudio.core.presentatioon.request.SetVideoRequest;
 import com.videototextaudio.core.presentatioon.view.ListAudioView;
+import com.videototextaudio.core.presentatioon.view.VideoView;
 import com.videototextaudio.core.presentatioon.view.common.SuccessResponse;
 import com.videototextaudio.core.service.AudioServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -24,6 +26,26 @@ import java.util.stream.Collectors;
 public class VideoConvertorController {
 
     private final AudioServiceImpl audioService;
+
+    @Operation(summary = "Get all videos info")
+    @GetMapping()
+    public List<VideoView> getVideo() {
+        log.info("Request for getting all video info");
+        return audioService.getVideoUrls().stream()
+                .map(url -> VideoView.builder()
+                        .url(url)
+                        .processing(audioService.getAudioStatus(url))
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Operation(summary = "Add video info")
+    @PostMapping()
+    public SuccessResponse setVideo(@RequestBody SetVideoRequest request) {
+        log.info("Request for setting video: {}", request);
+        audioService.setVideo(request);
+        return new SuccessResponse();
+    }
 
     @Operation(summary = "Get text from video")
     @GetMapping(value = "/download")
@@ -47,7 +69,7 @@ public class VideoConvertorController {
         return new SuccessResponse();
     }
 
-    @Operation(summary = "Set status for timestamp")
+    @Operation(summary = "Set status for video")
     @PostMapping(value = "/status", consumes = MediaType.APPLICATION_JSON_VALUE)
     public SuccessResponse setStatus(@Valid @RequestBody SetProcessingRequest request) {
         log.info("Request for setting audio status: {}", request);

@@ -1,7 +1,10 @@
 package com.videototextaudio.core;
 
 import com.videototextaudio.core.controller.VideoConvertorController;
+import com.videototextaudio.core.enums.Processing;
 import com.videototextaudio.core.presentatioon.request.SetAudioRequest;
+import com.videototextaudio.core.presentatioon.request.SetProcessingRequest;
+import com.videototextaudio.core.presentatioon.request.SetVideoRequest;
 import com.videototextaudio.core.repository.AudioRepositoryImpl;
 import com.videototextaudio.core.repository.VideoProcessingRepositoryImpl;
 import org.junit.jupiter.api.Assertions;
@@ -166,12 +169,18 @@ public class VideoToTextAudioApplicationTests {
     private void generate(String url) {
         audioRepository.removeAll(url);
         videoProcessingRepository.remove(url);
-        for (int i = 0; i < 100; i += 5)
+        controller.setVideo(SetVideoRequest.builder().url(url).build());
+        controller.setStatus(SetProcessingRequest.builder().url(url).processing(Processing.PROCESSING).build());
+        for (int i = 0; i < 100; i += 5) {
+            videoProcessingRepository.updateTimer(url);
             controller.setAudio(SetAudioRequest.builder()
                     .url(url)
                     .start(i)
                     .sentence("Sentence #" + i)
                     .build());
+        }
+//        controller.setStatus(SetProcessingRequest.builder().url(url).processing(Processing.PROCESSING).build());
+        controller.setStatus(SetProcessingRequest.builder().url(url).processing(Processing.PROCESSED).build());
     }
 
 }

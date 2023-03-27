@@ -35,8 +35,6 @@ public class AudioRepositoryImpl {
         template.opsForList().rightPush(getKey(SENTENCE, url), sentence);
     }
 
-    //------------------------------------------------------------------------------------------------------------------
-
     public void removeAll(String url){
         template.delete(getKey(TIMESTAMP, url));
         template.delete(getKey(SENTENCE, url));

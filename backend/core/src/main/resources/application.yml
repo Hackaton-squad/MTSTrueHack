@@ -3,9 +3,6 @@ server:
   servlet:
     context-path: ${SERVLET_CONTEXT_PATH:/}
 
-tts:
-  speed: 1000
-
 spring:
   redis:
 #    host: ${SPRING_REDIS_HOST:localhost}
@@ -16,3 +13,16 @@ spring:
     redis:
       repositories:
         enabled: false
+
+ttl:
+  redis:
+    processing-timer: 3600
+#    processing-timer: 25
+
+microservice:
+  ml:
+#    host: ${MICROSERVICE_ML_HOST:localhost}
+    host: ${MICROSERVICE_ML_HOST:video_processing}
+    port: ${MICROSERVICE_ML_PORT:8081}
+    rout:
+      convert: ${MICROSERVICE_ML_PORT:/process}
