@@ -9,8 +9,13 @@ from exceptions import RetryableException
 INTERVAL_IN_SECONDS = 10
 MAX_INTERVAL_IN_SECONDS = 70
 SUBTITLE_GAP_SECONDS_START = 1.0
-SUBTITLE_GAP_SECONDS_END = 0.5
+SUBTITLE_GAP_SECONDS_END = 0.8
 SUBTITLE_GAP_SECONDS_LEN = 0.5
+METRIC_THRESHOLD = 0.8
+
+
+def convert_timestamp_to_milliseconds(timestamp):
+    return int(timestamp * 1000)
 
 
 def load_video(link: str, path: str):
@@ -25,7 +30,7 @@ def load_video(link: str, path: str):
         raise RetryableException("Error while loading video") from exc
 
 
-def process_by_frames(path: str, callback, predict, subtitle_path=None):
+def process_by_frames(path: str, callback, predict, metric, subtitle_path=None):
     cam = cv2.VideoCapture(path)
 
     (major_ver, minor_ver, subminor_ver) = cv2.__version__.split('.')
@@ -41,6 +46,7 @@ def process_by_frames(path: str, callback, predict, subtitle_path=None):
 
     currentframe = 0
     previousframe = 0
+    previouscaption = ""
     while True:
         ret, frame = cam.read()
         if ret:
@@ -54,7 +60,6 @@ def process_by_frames(path: str, callback, predict, subtitle_path=None):
                 timestamp = int(currentframe / fps) - SUBTITLE_GAP_SECONDS_LEN
 
                 if belongs_to_interval(timestamp, intervals):
-                    #  and currentframe - previousframe < MAX_INTERVAL_IN_SECONDS * int(fps):
                     currentframe += 1
                     continue
 
@@ -62,8 +67,19 @@ def process_by_frames(path: str, callback, predict, subtitle_path=None):
                 if len(caption) > 0:
                     caption = caption[0]
                 if len(caption) > len(PROMPT):
-                    callback(timestamp, caption[len(PROMPT):])
+                    caption = caption[len(PROMPT):]
+                else:
+                    currentframe += 1
+                    continue
+
+                if currentframe - previousframe < MAX_INTERVAL_IN_SECONDS * int(fps):
+                    if metric.compute(predictions=[caption], references=[previouscaption])['meteor'] > METRIC_THRESHOLD:
+                        currentframe += 1
+                        continue
+
+                callback(convert_timestamp_to_milliseconds(timestamp), caption)
                 previousframe = currentframe
+                previouscaption = caption
 
             currentframe += 1
         else:

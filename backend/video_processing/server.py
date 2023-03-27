@@ -8,6 +8,7 @@ from video import load_video, process_by_frames
 import os
 import requests
 import uuid
+import evaluate
 from model import Model
 from exceptions import RetryableException
 
@@ -18,6 +19,7 @@ processes = []
 queue = mp.Queue()
 barrier = mp.Barrier(n_proc + 1)
 
+
 class Status(Enum):
     NOT_PROCESSED = "NOT_PROCESSED"
     PROCESSED = "PROCESSED"
@@ -25,10 +27,10 @@ class Status(Enum):
 
 def process(queue, server_url):
     model = Model()
+    meteor = evaluate.load('meteor')
     status_url = str(furl(server_url) / "status")
 
     def callback(timestamp, caption):
-        print(f"Timestamp: {timestamp}, caption: {caption}")
         requests.post(status_url, json={'url': url, 'start': timestamp, 'sentence': caption})
 
     barrier.wait()
@@ -40,7 +42,7 @@ def process(queue, server_url):
             load_video(url, filename)
 
             # TODO - while loading video also load subtitles, then pass them to subtitle_path
-            process_by_frames(filename, callback=callback, predict=model.predict_caption, subtitle_path=None)
+            process_by_frames(filename, callback=callback, predict=model.predict_caption, metric=meteor, subtitle_path=None)
             os.remove(filename)
         except RetryableException as retr:
             error_msg = str(retr)
