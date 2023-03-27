@@ -53,16 +53,24 @@ window.addEventListener('DOMContentLoaded', event => {
     });
 
     let input = document.getElementById('input_url');
-    let video = document.getElementById("video");
+    let video_player = document.getElementById("video");
+    let audio_player = document.getElementById("audio");
+
     document.getElementById('get_video_button').addEventListener('click', function (e) {
         fetch('/getAudios?url=' + input.value).then(response => response.json()).then(response => {
+            video_player.setAttribute('src', input.value);
             let audios = response.audios;
-            video.addEventListener('timeupdate', function () {
+            video_player.addEventListener('timeupdate', function () {
                 audios.forEach(audio => {
                     if (this.currentTime > audio.start && this.currentTime < audio.start + 0.250) {
                         //video.muted = true;
                         fetch('/playAudio?start=' + audio.start).then(r => r.json()).then(r => {
-                            alert(r.created);
+                            console.log(r.audio);
+                            audio_player.pause();
+                            audio_player.setAttribute('src', r.audio);
+                            audio_player.load();
+                            audio_player.play();
+                            //alert(r.created);
                         });
                     }
                 });

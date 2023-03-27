@@ -35,7 +35,7 @@ var getAudio = function textToSpeech(audio) { // sample async action
         },
     })
         .then(result => {
-            const dest = fs.createWriteStream('./media/' + audio.start + '.mp3');
+            const dest = fs.createWriteStream('./public/media/' + audio.start + '.mp3');
             return pipeline(result.body, dest);
         })
         .catch(err => console.error(err));
@@ -76,8 +76,9 @@ app.get('/getAudios', (req, res) => {
 
 app.get('/playAudio', (req, res) => {
     let audio_start_time = req.query.start;
-    load('./media/' + audio_start_time + '.mp3').then(play);
-    res.send('ok');
+    let audio_path = 'media/' + audio_start_time + '.mp3';
+    //load('./public/media/' + audio_start_time + '.mp3').then(play);
+    res.json({'audio' : audio_path});
 });
 
 app.listen(port, () => {            //server starts listening for any attempts from a client to connect at port: {port}
