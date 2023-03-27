@@ -47,10 +47,13 @@ var getAudio = function textToSpeech(audio) { // sample async action
         .catch(err => console.error(err));
 };
 
+app.use(express.static("public"));
+app.use(express.urlencoded({ extended: true }));
+
 //Idiomatic expression in express to route and respond to a client request
 app.get('/', (req, res) => {        //get requests to the root ("/") will route here
     //server responds by sending the index.html file to the client's browser
-    res.sendFile('index.html', {root: __dirname});                                                 //the .sendFile method needs the absolute path to the file, see: https://expressjs.com/en/4x/api.html#res.sendFile
+    return res.redirect("index.html");                                              //the .sendFile method needs the absolute path to the file, see: https://expressjs.com/en/4x/api.html#res.sendFile
 });
 
 app.get('/getAudios', (req, res) => {
