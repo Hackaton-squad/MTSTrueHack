@@ -37,18 +37,12 @@ var getAudio = function textToSpeech(audio) { // sample async action
         .then(result => {
             const dest = fs.createWriteStream('./media/' + audio.start + '.mp3');
             return pipeline(result.body, dest);
-            // r.on('finish', function () {
-            //     const play = require('audio-play');
-            //     const load = require('audio-loader');
-            //
-            //     load('./octocat.mp3').then(play);
-            // });
         })
         .catch(err => console.error(err));
 };
 
 app.use(express.static("public"));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended: true}));
 
 //Idiomatic expression in express to route and respond to a client request
 app.get('/', (req, res) => {        //get requests to the root ("/") will route here
@@ -69,25 +63,21 @@ app.get('/getAudios', (req, res) => {
     //         'Authorization': 'Api-Key ' + api_key,
     //     },
     // });
+    let url = req.query.url;
 
     var timestamps = require('./timestamps.json')
 
     Promise.all(timestamps.audios.map(getAudio))
         .then(result => {
-            fs.readdir('./media/', (err, files) => {
-                files.forEach(file => {
-                    console.log(file);
-                });
-            });
-            console.log(result);
-            //res.send(JSON.stringify({created: 'success'}))
-            res.send(JSON.stringify(timestamps.audios));
+            res.json(timestamps)
         })
         .catch(err => console.error(err));
 });
 
 app.get('/playAudio', (req, res) => {
-    ms.pipe(req, res, "octocat.ogg");
+    let audio_start_time = req.query.start;
+    load('./media/' + audio_start_time + '.mp3').then(play);
+    res.send('ok');
 });
 
 app.listen(port, () => {            //server starts listening for any attempts from a client to connect at port: {port}

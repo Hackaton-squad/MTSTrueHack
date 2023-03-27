@@ -16,27 +16,6 @@
           type="text/css"/>
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="css/styles.css" rel="stylesheet"/>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            let input = document.getElementById('input_url')
-            document.getElementById('get_video_button').addEventListener('click', function (e) {
-                fetch('/getAudios?url=' + input.value).then(r => r.json()).then(r => {
-                    alert(r);
-                })
-            });
-            let video = document.getElementById("video");
-            video.addEventListener('timeupdate', function () {
-                console.log(this.currentTime);
-                if (this.currentTime > 3.0 && this.currentTime < 3.250) {
-                    //video.muted = true;
-                    fetch('/getAudio').then(r => r.json()).then(r => {
-                        alert(r.created);
-                    });
-                }
-                document.getElementById("timer").innerHTML = this.currentTime;
-            });
-        });
-    </script>
 </head>
 <body id="page-top">
 <!-- Navigation-->
@@ -378,12 +357,12 @@
         <div class="input-group-append">
             <button id="get_video_button" class="btn btn-primary btn-primary-footer" type="button">Смотреть</button>
         </div>
-        <video id="video" preload="auto" loop autoplay controls>
-            <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-                    type='video/mp4'/>
-        </video>
-        <div id="timer"></div>
     </div>
+    <video id="video" preload="auto" loop controls width="720" height="480">
+        <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                type='video/mp4'/>
+    </video>
+    <div id="timer"></div>
 </div>
 <!-- Bootstrap core JS-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

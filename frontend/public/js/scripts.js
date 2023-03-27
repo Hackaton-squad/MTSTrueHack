@@ -36,7 +36,8 @@ window.addEventListener('DOMContentLoaded', event => {
             target: '#mainNav',
             offset: 72,
         });
-    };
+    }
+    ;
 
     // Collapse responsive navbar when toggler is visible
     const navbarToggler = document.body.querySelector('.navbar-toggler');
@@ -51,4 +52,23 @@ window.addEventListener('DOMContentLoaded', event => {
         });
     });
 
+    let input = document.getElementById('input_url');
+    let video = document.getElementById("video");
+    document.getElementById('get_video_button').addEventListener('click', function (e) {
+        fetch('/getAudios?url=' + input.value).then(response => response.json()).then(response => {
+            let audios = response.audios;
+            video.addEventListener('timeupdate', function () {
+                audios.forEach(audio => {
+                    if (this.currentTime > audio.start && this.currentTime < audio.start + 0.250) {
+                        //video.muted = true;
+                        fetch('/playAudio?start=' + audio.start).then(r => r.json()).then(r => {
+                            alert(r.created);
+                        });
+                    }
+                });
+                document.getElementById("timer").innerHTML = this.currentTime;
+            });
+            console.log(response.audios[0]);
+        })
+    });
 });
