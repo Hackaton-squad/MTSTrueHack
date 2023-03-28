@@ -19,7 +19,7 @@ def convert_timestamp_to_milliseconds(timestamp):
     return int(timestamp * 1000)
 
 
-def load_video(link: str, path: str):
+def load(link: str, path: str):
     try:
         r = requests.get(link, stream=True)
 
@@ -28,7 +28,7 @@ def load_video(link: str, path: str):
                 if chunk:
                     f.write(chunk)
     except Exception as exc:
-        raise RetryableException("Error while loading video") from exc
+        raise RetryableException("Error while loading") from exc
 
 
 def process_by_frames(path: str, callback, predict, metric, subtitle_path=None):

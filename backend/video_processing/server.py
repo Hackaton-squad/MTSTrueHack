@@ -4,7 +4,7 @@ from enum import Enum
 from flask import Flask, request, jsonify
 from furl import furl
 import multiprocessing as mp
-from video import load_video, process_by_frames
+from video import load, process_by_frames
 import os
 import requests
 import uuid
@@ -38,16 +38,21 @@ def process(queue, server_url):
     print("All files downloaded")
     barrier.wait()
 
-    while url := queue.get():
+    while pair := queue.get():
         try:
-            filename = str(uuid.uuid4())
+            video_file = str(uuid.uuid4())
+            subtitles_file = str(uuid.uuid4())
+
+            url, srt = pair
 
             print("Loading video...")
-            load_video(url, filename)
+            load(url, video_file)
+            print("Loading subtitles...")
+            load(srt, subtitles_file)
 
-            # TODO - while loading video also load subtitles, then pass them to subtitle_path
-            process_by_frames(filename, callback=callback, predict=model.predict_caption, metric=meteor, subtitle_path=None)
-            os.remove(filename)
+            process_by_frames(video_file, callback=callback, predict=model.predict_caption, metric=meteor, subtitle_path=subtitles_file)
+            os.remove(video_file)
+            os.remove(subtitles_file)
         except RetryableException as retr:
             error_msg = str(retr)
             #requests.post(status_url, json={'url': url, 'processing': Status.NOT_PROCESSED.value})
@@ -63,8 +68,9 @@ def process(queue, server_url):
 def handle_request():
     data = request.get_json(force=True)
     url = data['url']
+    srt = data['srturl']
 
-    queue.put(url)
+    queue.put((url, srt))
     return jsonify(success=True)
 
 
