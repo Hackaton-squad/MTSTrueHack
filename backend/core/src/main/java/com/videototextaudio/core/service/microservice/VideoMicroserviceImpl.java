@@ -45,7 +45,7 @@ public class VideoMicroserviceImpl {
             log.info("Response from ml: {}", response.getStatusCode().name());
             return HttpStatus.OK.equals(response.getStatusCode());
         } catch (ResourceAccessException e) {
-            log.error("Microservice connection error", e);
+            log.error("Ml microservice error :" + e.getMessage());
             return false;
         }
     }

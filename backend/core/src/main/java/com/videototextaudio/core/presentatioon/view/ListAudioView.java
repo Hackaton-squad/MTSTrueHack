@@ -9,5 +9,6 @@ import java.util.HashMap;
 @Builder
 public class ListAudioView {
     HashMap<Long, String> audios;
+    Long lastTimestamp;
     String videoProcessingStatus;
 }

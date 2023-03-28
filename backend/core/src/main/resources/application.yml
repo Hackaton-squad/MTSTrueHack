@@ -5,8 +5,8 @@ server:
 
 spring:
   redis:
-#    host: ${SPRING_REDIS_HOST:localhost}
-    host: ${SPRING_REDIS_HOST:redis}
+    host: ${SPRING_REDIS_HOST:localhost}
+#    host: ${SPRING_REDIS_HOST:redis}
     port: ${SPRING_REDIS_PORT:6379}
 
   data:
@@ -21,8 +21,14 @@ ttl:
 
 microservice:
   ml:
-#    host: ${MICROSERVICE_ML_HOST:localhost}
-    host: ${MICROSERVICE_ML_HOST:video_processing}
+    host: ${MICROSERVICE_ML_HOST:localhost}
+#    host: ${MICROSERVICE_ML_HOST:video_processing}
     port: ${MICROSERVICE_ML_PORT:8081}
     rout:
-      convert: ${MICROSERVICE_ML_PORT:/process}
+      convert: ${MICROSERVICE_ML_PATH:/process}
+  translate:
+    url: ${MICROSERVICE_TRANSLATE_URL:https://translate.api.cloud.yandex.net/translate/v2/translate}
+
+yandex:
+  translate:
+    api-ket: ${YANDEX_TRANSLATE_API_KEY:_}
