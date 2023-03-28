@@ -10,6 +10,8 @@ WORKDIR /app
 COPY download.sh .
 RUN bash download.sh
 
+RUN apt-get update && apt-get install -y python3-opencv
+
 COPY server.py .
 COPY exceptions.py .
 COPY video.py .
