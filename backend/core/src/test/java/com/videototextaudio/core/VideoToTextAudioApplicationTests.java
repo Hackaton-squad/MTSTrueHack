@@ -36,7 +36,7 @@ public class VideoToTextAudioApplicationTests {
 
         final String URL = "http://getExistingAudiosOne";
         generate(URL);
-        var audios = controller.getAudios(URL, 3, 4, DEFAULT);
+        var audios = controller.getAudiosMap(URL, 3, 4, DEFAULT);
         Assertions.assertEquals(0, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(1, audios.getAudios().size());
 
@@ -51,7 +51,7 @@ public class VideoToTextAudioApplicationTests {
 
         final String URL = "http://getExistingAudiosMany";
         generate(URL);
-        var audios = controller.getAudios(URL, 6, 16, DEFAULT);
+        var audios = controller.getAudiosMap(URL, 6, 16, DEFAULT);
         Assertions.assertEquals(5, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(3, audios.getAudios().size());
 
@@ -66,7 +66,7 @@ public class VideoToTextAudioApplicationTests {
 
         final String URL = "http://getRightEquals";
         generate(URL);
-        var audios = controller.getAudios(URL, 6, 15, DEFAULT);
+        var audios = controller.getAudiosMap(URL, 6, 15, DEFAULT);
         Assertions.assertEquals(5, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(2, audios.getAudios().size());
 
@@ -81,7 +81,7 @@ public class VideoToTextAudioApplicationTests {
 
         final String URL = "http://getLeftEquals";
         generate(URL);
-        var audios = controller.getAudios(URL, 5, 16, DEFAULT);
+        var audios = controller.getAudiosMap(URL, 5, 16, DEFAULT);
         Assertions.assertEquals(5, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(3, audios.getAudios().size());
 
@@ -96,7 +96,7 @@ public class VideoToTextAudioApplicationTests {
 
         final String URL = "http://getMoreThanRightBorder";
         generate(URL);
-        var audios = controller.getAudios(URL, 3, 120, DEFAULT);
+        var audios = controller.getAudiosMap(URL, 3, 120, DEFAULT);
         Assertions.assertEquals(0, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(20, audios.getAudios().size());
 
@@ -111,7 +111,7 @@ public class VideoToTextAudioApplicationTests {
 
         final String URL = "http://getLessThanLeftBorder";
         generate(URL);
-        var audios = controller.getAudios(URL, -1, 1, DEFAULT);
+        var audios = controller.getAudiosMap(URL, -1, 1, DEFAULT);
         Assertions.assertEquals(0, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(1, audios.getAudios().size());
 
@@ -127,7 +127,7 @@ public class VideoToTextAudioApplicationTests {
         final String URL = "http://getAll";
         generate(URL);
 
-        var audios = controller.getAudios(URL, -1, -1, DEFAULT);
+        var audios = controller.getAudiosMap(URL, -1, -1, DEFAULT);
         Assertions.assertEquals(0, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(20, audios.getAudios().size());
 
