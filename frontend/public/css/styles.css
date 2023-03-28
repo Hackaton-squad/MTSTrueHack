@@ -11532,6 +11532,10 @@ html {
   font-weight: bold;
   padding-top: 1em;
 }
+
+#timer {
+  padding-bottom: 40px;
+}
 .bg {
   background-image: url("/frontend/assets/img/mustheadbckrnd.jpeg");
 
