@@ -53,25 +53,45 @@ window.addEventListener('DOMContentLoaded', event => {
     });
 
     let input = document.getElementById('input_url');
-    let video_player = document.getElementById("video");
-    let audio_player = document.getElementById("audio");
+    let videoPlayer = document.getElementById("video");
+    let audioPlayer = document.getElementById("audio");
+    let filmsUrls = [
+        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
+        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4'
+    ];
 
-    document.getElementById('get_video_button').addEventListener('click', function (e) {
-        fetch('/getAudios?url=' + input.value).then(response => response.json()).then(response => {
-            video_player.setAttribute('src', input.value);
+    let getAudios = function getAudios(url) {
+        fetch('/getAudios?url=' + url).then(response => response.json()).then(response => {
+            videoPlayer.setAttribute('src', input.value);
             let audios = response.audios;
-            video_player.addEventListener('timeupdate', function () {
+            videoPlayer.addEventListener('timeupdate', function () {
                 audios.forEach(audio => {
                     if (this.currentTime > audio.start && this.currentTime < audio.start + 0.250) {
-                        audio_player.pause();
-                        audio_player.setAttribute('src', '/playAudio?start=' + audio.start);
-                        audio_player.load();
-                        audio_player.play();
+                        audioPlayer.pause();
+                        audioPlayer.setAttribute('src', '/playAudio?start=' + audio.start);
+                        audioPlayer.load();
+                        audioPlayer.play();
                     }
                 });
                 document.getElementById("timer").innerHTML = this.currentTime;
             });
             console.log(response.audios[0]);
         })
+    };
+
+    document.getElementById('get_video_button').addEventListener('click', function (e) {
+        getAudios(input.value);
+    });
+
+    let filmsButtons = document.querySelectorAll('portfolio-item');
+
+    filmsButtons.forEach((filmButton, index) => {
+        filmButton.addEventListener('click', function (e) {
+            getAudios(filmsUrls[index]);
+        });
     });
 });
