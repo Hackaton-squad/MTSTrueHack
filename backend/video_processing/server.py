@@ -48,7 +48,7 @@ def process(queue, server_url):
             print("Loading video...")
             load(url, video_file)
             print("Loading subtitles...")
-            if len(subtitles_file) > 0:
+            if len(srt) > 0:
                 load(srt, subtitles_file)
             else:
                 subtitles_file = None
@@ -56,7 +56,7 @@ def process(queue, server_url):
             process_by_frames(video_file, callback=callback, predict=model.predict_caption, metric=meteor, subtitle_path=subtitles_file)
 
             os.remove(video_file)
-            if len(subtitles_file) > 0:
+            if subtitles_file is not None:
                 os.remove(subtitles_file)
         except RetryableException as retr:
             error_msg = str(retr)
