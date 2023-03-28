@@ -63,15 +63,10 @@ window.addEventListener('DOMContentLoaded', event => {
             video_player.addEventListener('timeupdate', function () {
                 audios.forEach(audio => {
                     if (this.currentTime > audio.start && this.currentTime < audio.start + 0.250) {
-                        //video.muted = true;
-                        fetch('/playAudio?start=' + audio.start).then(r => r.json()).then(r => {
-                            console.log(r.audio);
-                            audio_player.pause();
-                            audio_player.setAttribute('src', r.audio);
-                            audio_player.load();
-                            audio_player.play();
-                            //alert(r.created);
-                        });
+                        audio_player.pause();
+                        audio_player.setAttribute('src', '/playAudio?start=' + audio.start);
+                        audio_player.load();
+                        audio_player.play();
                     }
                 });
                 document.getElementById("timer").innerHTML = this.currentTime;

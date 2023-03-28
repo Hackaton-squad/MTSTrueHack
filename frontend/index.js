@@ -69,9 +69,15 @@ app.get('/getAudios', (req, res) => {
 
 app.get('/playAudio', (req, res) => {
     let audio_start_time = req.query.start;
-    let audio_path = 'media/' + audio_start_time + '.mp3';
-    //load('./public/media/' + audio_start_time + '.mp3').then(play);
-    res.json({'audio' : audio_path});
+    let audio_path = './public/media/' + audio_start_time + '.mp3';
+
+    const rs = fs.createReadStream(audio_path);
+    const { size } = fs.statSync(audio_path);
+
+    res.setHeader("Content-Type", "audio/mpeg");
+    res.setHeader("Content-Length", size);
+
+    rs.pipe(res);
 });
 
 app.listen(PORT, () => {
