@@ -59,6 +59,7 @@ app.get('/getAudios', (req, res) => {
     let url = req.query.url;
 
     var timestamps = require('./timestamps.json')
+    console.log('Timestamps:' + timestamps.audios[0].text);
 
     Promise.all(timestamps.audios.map(getAudio))
         .then(result => {
