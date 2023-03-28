@@ -48,11 +48,16 @@ def process(queue, server_url):
             print("Loading video...")
             load(url, video_file)
             print("Loading subtitles...")
-            load(srt, subtitles_file)
+            if len(subtitles_file) > 0:
+                load(srt, subtitles_file)
+            else:
+                subtitles_file = None
 
             process_by_frames(video_file, callback=callback, predict=model.predict_caption, metric=meteor, subtitle_path=subtitles_file)
+
             os.remove(video_file)
-            os.remove(subtitles_file)
+            if len(subtitles_file) > 0:
+                os.remove(subtitles_file)
         except RetryableException as retr:
             error_msg = str(retr)
             #requests.post(status_url, json={'url': url, 'processing': Status.NOT_PROCESSED.value})
