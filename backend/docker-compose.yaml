@@ -5,6 +5,7 @@ services:
     build: video_processing
     ports:
       - "8081:8081"
+    env_file: core.env  
 
   redis:
     image: redis:alpine

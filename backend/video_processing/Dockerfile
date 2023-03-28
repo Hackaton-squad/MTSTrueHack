@@ -7,8 +7,9 @@ RUN pip3 install -r requirements.txt
 RUN mkdir /app
 WORKDIR /app
 
-COPY download.sh .
-RUN bash download.sh
+# for loading big model
+# COPY download.sh .
+# RUN bash download.sh
 
 RUN apt-get update && apt-get install -y python3-opencv
 

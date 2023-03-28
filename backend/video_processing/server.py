@@ -33,7 +33,7 @@ def process(queue, server_url):
 
     def callback(timestamp, caption):
         print(f"{timestamp}: {caption}")
-        #requests.post(upload_url, json={'url': url, 'start': timestamp, 'sentence': caption})
+        requests.post(upload_url, json={'url': url, 'start': timestamp, 'sentence': caption})
 
     print("All files downloaded")
     barrier.wait()
@@ -47,10 +47,11 @@ def process(queue, server_url):
 
             print("Loading video...")
             load(url, video_file)
-            print("Loading subtitles...")
-            if len(srt) > 0:
+            if srt and len(srt) > 0:
+                print("Loading subtitles...")
                 load(srt, subtitles_file)
             else:
+                print("No subtitles...")
                 subtitles_file = None
 
             process_by_frames(video_file, callback=callback, predict=model.predict_caption, metric=meteor, subtitle_path=subtitles_file)
@@ -59,21 +60,23 @@ def process(queue, server_url):
             if subtitles_file is not None:
                 os.remove(subtitles_file)
         except RetryableException as retr:
-            error_msg = str(retr)
-            #requests.post(status_url, json={'url': url, 'processing': Status.NOT_PROCESSED.value})
+            # error_msg = str(retr)
+            print(retr)
+            requests.post(status_url, json={'url': url, 'processing': Status.NOT_PROCESSED.value})
         except Exception as e:
-            error_msg = str(e)
-            #requests.post(status_url, json={'url': url, 'processing': Status.NOT_PROCESSED.value})
+            # error_msg = str(e)
+            print(e)
+            requests.post(status_url, json={'url': url, 'processing': Status.NOT_PROCESSED.value})
         else:
             pass
-            #requests.post(status_url, json={'url': url, 'processing': Status.PROCESSED.value})
+            requests.post(status_url, json={'url': url, 'processing': Status.PROCESSED.value})
 
 
 @app.route("/process", methods=['POST'])
 def handle_request():
     data = request.get_json(force=True)
     url = data['url']
-    srt = data['srturl']
+    srt = data['subtitles']
 
     queue.put((url, srt))
     return jsonify(success=True)
@@ -89,6 +92,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--url", help="url to backend", default="http://localhost:8080")
     args = parser.parse_args()
+    print("Core url: ", args.url)
 
     atexit.register(close_running_processes)
     for _ in range(n_proc):
