@@ -3,11 +3,12 @@ package com.videototextaudio.core.controller;
 import com.videototextaudio.core.entity.Audio;
 import com.videototextaudio.core.enums.TranslateLang;
 import com.videototextaudio.core.presentatioon.request.*;
+import com.videototextaudio.core.presentatioon.view.AudioView;
 import com.videototextaudio.core.presentatioon.view.ListAudioView;
+import com.videototextaudio.core.presentatioon.view.MapAudioView;
 import com.videototextaudio.core.presentatioon.view.VideoView;
 import com.videototextaudio.core.presentatioon.view.common.SuccessResponse;
 import com.videototextaudio.core.service.AudioServiceImpl;
-import com.videototextaudio.core.service.microservice.TranslationMicroserviceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,15 +51,38 @@ public class VideoConvertorController {
     @Operation(summary = "Get text from video")
     @GetMapping(value = "/download")
     public ListAudioView getAudios(@RequestParam String url,
-                                   @RequestParam long start,
-                                   @RequestParam long end,
-                                   @RequestParam(required = false, defaultValue = "DEFAULT") TranslateLang lang) {
+                                  @RequestParam long start,
+                                  @RequestParam long end,
+                                  @RequestParam(required = false, defaultValue = "DEFAULT") TranslateLang lang) {
         var request = GetAudioRequest.builder().url(url).start(start).end(end).lang(lang).build();
         log.info("Request for getting audio: {}", request);
+        var audios = audioService.getAudios(request);
+        var status = audioService.getAudioStatus(request.getUrl()).name();
+        var last = audioService.getLastTimeStamp(request.getUrl());
+
         return ListAudioView.builder()
-                .audios(audioService.getAudios(request).stream().collect(Collectors.toMap(Audio::getStart, Audio::getText, (x, y) -> y, LinkedHashMap::new)))
-                .videoProcessingStatus(audioService.getAudioStatus(request.getUrl()).name())
-                .lastTimestamp(audioService.getLastTimeStamp(request.getUrl()))
+                .audios(audios.stream().map(a -> AudioView.builder().start(a.getStart()).text(a.getText()).build()).collect(Collectors.toList()))
+                .videoProcessingStatus(status)
+                .lastTimestamp(last)
+                .build();
+    }
+
+    @Operation(summary = "Get text from video map")
+    @GetMapping(value = "/download-map")
+    public MapAudioView getAudiosMap(@RequestParam String url,
+                                     @RequestParam long start,
+                                     @RequestParam long end,
+                                     @RequestParam(required = false, defaultValue = "DEFAULT") TranslateLang lang) {
+        var request = GetAudioRequest.builder().url(url).start(start).end(end).lang(lang).build();
+        log.info("Request for getting audio: {}", request);
+        var audios = audioService.getAudios(request);
+        var status = audioService.getAudioStatus(request.getUrl()).name();
+        var last = audioService.getLastTimeStamp(request.getUrl());
+
+        return MapAudioView.builder()
+                .audios(audios.stream().collect(Collectors.toMap(Audio::getStart, Audio::getText, (x, y) -> y, LinkedHashMap::new)))
+                .videoProcessingStatus(status)
+                .lastTimestamp(last)
                 .build();
     }
 
