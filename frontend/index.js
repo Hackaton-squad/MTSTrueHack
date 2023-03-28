@@ -8,7 +8,7 @@ const YANDEX_TTS_API_KEY = process.env.YANDEX_TTS_API_KEY;
 const fetch = require('node-fetch');
 const {URLSearchParams} = require('url');
 const fs = require('fs');
-const {pipeline} = require('node:stream/promises');
+const {pipeline} = require('stream/promises');
 
 var getAudio = function textToSpeech(audio) {
     const params = new URLSearchParams();
