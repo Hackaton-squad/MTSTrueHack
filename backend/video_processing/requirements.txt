@@ -16,3 +16,7 @@ torchtext==0.14.1
 torchvision==0.14.1
 pysrt==1.1.2
 evaluate==0.4.0
+
+nltk
+ffmpeg
+scenedetect[opencv]

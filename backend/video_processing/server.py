@@ -14,7 +14,7 @@ from exceptions import RetryableException
 
 app = Flask(__name__, static_url_path="")
 
-n_proc = 2
+n_proc = 1
 processes = []
 queue = mp.Queue()
 barrier = mp.Barrier(n_proc + 1)
@@ -29,16 +29,20 @@ def process(queue, server_url):
     model = Model()
     meteor = evaluate.load('meteor')
     status_url = str(furl(server_url) / "status")
+    upload_url = str(furl(server_url) / "upload")
 
     def callback(timestamp, caption):
-        requests.post(status_url, json={'url': url, 'start': timestamp, 'sentence': caption})
+        print(f"{timestamp}: {caption}")
+        #requests.post(upload_url, json={'url': url, 'start': timestamp, 'sentence': caption})
 
+    print("All files downloaded")
     barrier.wait()
 
     while url := queue.get():
         try:
             filename = str(uuid.uuid4())
 
+            print("Loading video...")
             load_video(url, filename)
 
             # TODO - while loading video also load subtitles, then pass them to subtitle_path
@@ -46,12 +50,13 @@ def process(queue, server_url):
             os.remove(filename)
         except RetryableException as retr:
             error_msg = str(retr)
-            requests.post(status_url, json={'url': url, 'processing': Status.NOT_PROCESSED.value})
+            #requests.post(status_url, json={'url': url, 'processing': Status.NOT_PROCESSED.value})
         except Exception as e:
             error_msg = str(e)
-            requests.post(status_url, json={'url': url, 'processing': Status.NOT_PROCESSED.value})
+            #requests.post(status_url, json={'url': url, 'processing': Status.NOT_PROCESSED.value})
         else:
-            requests.post(status_url, json={'url': url, 'processing': Status.PROCESSED.value})
+            pass
+            #requests.post(status_url, json={'url': url, 'processing': Status.PROCESSED.value})
 
 
 @app.route("/process", methods=['POST'])

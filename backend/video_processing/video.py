@@ -4,6 +4,7 @@ from PIL import Image
 import pysrt
 from model import PROMPT
 from exceptions import RetryableException
+from scenedetect import detect, ContentDetector
 
 
 INTERVAL_IN_SECONDS = 10
@@ -32,6 +33,8 @@ def load_video(link: str, path: str):
 
 def process_by_frames(path: str, callback, predict, metric, subtitle_path=None):
     cam = cv2.VideoCapture(path)
+    print("Detecting scene changes...")
+    scene_list = detect(path, ContentDetector())
 
     (major_ver, minor_ver, subminor_ver) = cv2.__version__.split('.')
 
@@ -44,13 +47,17 @@ def process_by_frames(path: str, callback, predict, metric, subtitle_path=None):
     if subtitle_path is not None:
         intervals = subtitle_intervals(subtitle_path)
 
-    currentframe = 0
     previousframe = 0
     previouscaption = ""
-    while True:
+
+    print("Starting predicting...")
+    for scene in scene_list:
+        currentframe = scene[0].get_frames() + 24  # отступаем где то секунду от начала эпизода
+        # устанавливаем текущий фрейм на значение currentframe
+        cam.set(1, currentframe)
+
         ret, frame = cam.read()
         if ret:
-
             if currentframe - previousframe > INTERVAL_IN_SECONDS * int(fps):
                 img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 image = Image.fromarray(img)
@@ -60,28 +67,24 @@ def process_by_frames(path: str, callback, predict, metric, subtitle_path=None):
                 timestamp = int(currentframe / fps) - SUBTITLE_GAP_SECONDS_LEN
 
                 if belongs_to_interval(timestamp, intervals):
-                    currentframe += 1
                     continue
 
-                caption = predict(image)
+                # delete prompt on larger model
+                caption = predict(image, start_text=PROMPT)
                 if len(caption) > 0:
                     caption = caption[0]
                 if len(caption) > len(PROMPT):
                     caption = caption[len(PROMPT):]
                 else:
-                    currentframe += 1
                     continue
 
                 if currentframe - previousframe < MAX_INTERVAL_IN_SECONDS * int(fps):
                     if metric.compute(predictions=[caption], references=[previouscaption])['meteor'] > METRIC_THRESHOLD:
-                        currentframe += 1
                         continue
 
                 callback(convert_timestamp_to_milliseconds(timestamp), caption)
                 previousframe = currentframe
                 previouscaption = caption
-
-            currentframe += 1
         else:
             break
 
