@@ -26,6 +26,12 @@ public class AudioRepositoryImpl {
                 .stream().map(timestampParser::stringToTimestamp).collect(Collectors.toList());
     }
 
+    public Long getLastTimestamp(String url) {
+        return Optional.ofNullable(template.opsForList().range(getKey(TIMESTAMP, url), -1, -1))
+                .orElse(new ArrayList<>())
+                .stream().map(timestampParser::stringToTimestamp).findFirst().orElse(0L);
+    }
+
     public List<String> getSentences(String url, int left, int right) {
         return template.opsForList().range(getKey(SENTENCE, url), left, right);
     }
@@ -35,9 +41,7 @@ public class AudioRepositoryImpl {
         template.opsForList().rightPush(getKey(SENTENCE, url), sentence);
     }
 
-    //------------------------------------------------------------------------------------------------------------------
-
-    public void removeAll(String url){
+    public void removeAll(String url) {
         template.delete(getKey(TIMESTAMP, url));
         template.delete(getKey(SENTENCE, url));
     }

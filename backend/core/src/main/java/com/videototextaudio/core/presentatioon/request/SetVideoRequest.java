@@ -11,11 +11,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SetAudioRequest {
+public class SetVideoRequest {
     @NotNull
     private String url;
-    @NotNull
-    private long start;
-    @NotNull
-    private String sentence;
 }

@@ -1,13 +1,18 @@
 package com.videototextaudio.core;
 
 import com.videototextaudio.core.controller.VideoConvertorController;
+import com.videototextaudio.core.enums.Processing;
 import com.videototextaudio.core.presentatioon.request.SetAudioRequest;
+import com.videototextaudio.core.presentatioon.request.SetProcessingRequest;
+import com.videototextaudio.core.presentatioon.request.SetVideoRequest;
 import com.videototextaudio.core.repository.AudioRepositoryImpl;
 import com.videototextaudio.core.repository.VideoProcessingRepositoryImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import static com.videototextaudio.core.enums.TranslateLang.DEFAULT;
 
 @SpringBootTest
 public class VideoToTextAudioApplicationTests {
@@ -31,7 +36,7 @@ public class VideoToTextAudioApplicationTests {
 
         final String URL = "http://getExistingAudiosOne";
         generate(URL);
-        var audios = controller.getAudios(URL, URL, 3, 4);
+        var audios = controller.getAudios(URL, 3, 4, DEFAULT);
         Assertions.assertEquals(0, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(1, audios.getAudios().size());
 
@@ -46,7 +51,7 @@ public class VideoToTextAudioApplicationTests {
 
         final String URL = "http://getExistingAudiosMany";
         generate(URL);
-        var audios = controller.getAudios(URL, URL, 6, 16);
+        var audios = controller.getAudios(URL, 6, 16, DEFAULT);
         Assertions.assertEquals(5, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(3, audios.getAudios().size());
 
@@ -61,7 +66,7 @@ public class VideoToTextAudioApplicationTests {
 
         final String URL = "http://getRightEquals";
         generate(URL);
-        var audios = controller.getAudios(URL, URL, 6, 15);
+        var audios = controller.getAudios(URL, 6, 15, DEFAULT);
         Assertions.assertEquals(5, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(2, audios.getAudios().size());
 
@@ -76,7 +81,7 @@ public class VideoToTextAudioApplicationTests {
 
         final String URL = "http://getLeftEquals";
         generate(URL);
-        var audios = controller.getAudios(URL, URL, 5, 16);
+        var audios = controller.getAudios(URL, 5, 16, DEFAULT);
         Assertions.assertEquals(5, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(3, audios.getAudios().size());
 
@@ -91,7 +96,7 @@ public class VideoToTextAudioApplicationTests {
 
         final String URL = "http://getMoreThanRightBorder";
         generate(URL);
-        var audios = controller.getAudios(URL, URL, 3, 120);
+        var audios = controller.getAudios(URL, 3, 120, DEFAULT);
         Assertions.assertEquals(0, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(20, audios.getAudios().size());
 
@@ -106,7 +111,7 @@ public class VideoToTextAudioApplicationTests {
 
         final String URL = "http://getLessThanLeftBorder";
         generate(URL);
-        var audios = controller.getAudios(URL, URL, -1, 1);
+        var audios = controller.getAudios(URL, -1, 1, DEFAULT);
         Assertions.assertEquals(0, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(1, audios.getAudios().size());
 
@@ -122,7 +127,7 @@ public class VideoToTextAudioApplicationTests {
         final String URL = "http://getAll";
         generate(URL);
 
-        var audios = controller.getAudios(URL, URL, -1, -1);
+        var audios = controller.getAudios(URL, -1, -1, DEFAULT);
         Assertions.assertEquals(0, audios.getAudios().keySet().stream().findFirst().get());
         Assertions.assertEquals(20, audios.getAudios().size());
 
@@ -166,12 +171,18 @@ public class VideoToTextAudioApplicationTests {
     private void generate(String url) {
         audioRepository.removeAll(url);
         videoProcessingRepository.remove(url);
-        for (int i = 0; i < 100; i += 5)
+        controller.setVideo(SetVideoRequest.builder().url(url).build());
+        controller.setStatus(SetProcessingRequest.builder().url(url).processing(Processing.PROCESSING).build());
+        for (int i = 0; i < 100; i += 5) {
+            videoProcessingRepository.updateTimer(url);
             controller.setAudio(SetAudioRequest.builder()
                     .url(url)
                     .start(i)
                     .sentence("Sentence #" + i)
                     .build());
+        }
+//        controller.setStatus(SetProcessingRequest.builder().url(url).processing(Processing.PROCESSING).build());
+        controller.setStatus(SetProcessingRequest.builder().url(url).processing(Processing.PROCESSED).build());
     }
 
 }

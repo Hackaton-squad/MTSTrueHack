@@ -11,11 +11,9 @@ import javax.validation.constraints.NotNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SetAudioRequest {
+public class StartProcessingRequest {
     @NotNull
     private String url;
-    @NotNull
-    private long start;
-    @NotNull
-    private String sentence;
+    private String srturl;
+    private Boolean hard = false;
 }
