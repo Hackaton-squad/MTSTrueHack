@@ -357,15 +357,21 @@
 
 <div class="panel-footer panel-custom">
     <div class="panel-footer-text">
-        <p class="py-3 px-0 px-lg-3 rounded">Добавьте свой собственный фильм</p>
+        <h2 class="py-3 px-0 px-lg-3 rounded">Добавьте свой собственный фильм</h2>
     </div>
-    <div class="input-group input-group-footer mb-3">
-        <input id="input_url" type="url" class="form-control" placeholder="Ссылка на фильм" aria-label="Movie's url"
-               aria-describedby="basic-addon2">
-        <div class="input-group-append">
-            <button id="get_video_button" class="btn btn-primary btn-primary-footer" type="button">Смотреть</button>
+    <form class="panel-footer-form">
+        <div class="form-group">
+            <label class="form-group-label" for="input_url_sub">Ссылка на файл с субтитрами</label>
+            <input id="input_url_sub" type="url" class="form-control" placeholder="Ссылка на субтитры" aria-label="Sub's url"
+                   aria-describedby="basic-addon2">
         </div>
-    </div>
+        <div class="form-group">
+            <label class="form-group-label" for="input_url">Ссылка на фильм в <i style="color: red">.MP4</i></label>
+            <input id="input_url" type="url" class="form-control" placeholder="Ссылка на фильм" aria-label="Movie's url"
+                   aria-describedby="basic-addon2">
+        </div>
+        <button id="get_video_button" type="submit" class="btn btn-primary">Смотреть</button>
+    </form>
 </div>
 <!-- Bootstrap core JS-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

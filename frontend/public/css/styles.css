@@ -11533,6 +11533,19 @@ html {
   padding-top: 1em;
 }
 
+.form-group {
+  padding-bottom: 1em;
+}
+
+.panel-footer-form {
+  padding: 1em 1em 2em;
+}
+
+.form-group-label {
+  color: white;
+  font-weight: bold;
+
+}
 #timer {
   padding-bottom: 40px;
 }
