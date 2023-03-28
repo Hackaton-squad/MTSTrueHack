@@ -37,7 +37,6 @@ window.addEventListener('DOMContentLoaded', event => {
             offset: 72,
         });
     }
-    ;
 
     // Collapse responsive navbar when toggler is visible
     const navbarToggler = document.body.querySelector('.navbar-toggler');
@@ -53,6 +52,7 @@ window.addEventListener('DOMContentLoaded', event => {
     });
 
     let input = document.getElementById('input_url');
+    let input_sub = document.getElementById('input_url_sub');
     let videoPlayer = document.getElementById("video");
     let audioPlayer = document.getElementById("audio");
     let filmsUrls = [
@@ -63,35 +63,57 @@ window.addEventListener('DOMContentLoaded', event => {
         'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
         'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4'
     ];
+    let filmsSubs = [
+        'sub_url',
+        'sub_url',
+        'sub_url',
+        'sub_url',
+        'sub_url',
+        'sub_url'
+    ];
+    let getAudios = function getAudios(url, suburl) {
+        fetch('/startProcessVideo?url=' + url + "&suburl=" + suburl)
+            .then(() => {
+                fetch('/loadAudio?url=' + input.value + "&start=" + 0 + "&end=" + (-1))
+                    .then(response => {
+                            videoPlayer.setAttribute('src', input.value);
+                            let audios = response.audios;
 
-    let getAudios = function getAudios(url) {
-        fetch('/getAudios?url=' + url).then(response => response.json()).then(response => {
-            videoPlayer.setAttribute('src', input.value);
-            let audios = response.audios;
-            videoPlayer.addEventListener('timeupdate', function () {
-                audios.forEach(audio => {
-                    if (this.currentTime > audio.start && this.currentTime < audio.start + 0.250) {
-                        audioPlayer.pause();
-                        audioPlayer.setAttribute('src', '/playAudio?start=' + audio.start);
-                        audioPlayer.load();
-                        audioPlayer.play();
-                    }
-                });
-                document.getElementById("timer").innerHTML = this.currentTime;
+                            videoPlayer.addEventListener('timeupdate', function () {
+                                if (Math.round(this.currentTime) % 10 === 0) {
+                                    fetch('/loadAudio?url=' + input.value + "&start=" + 0 + "&end=" + (-1)).then(
+                                        response => {
+                                            audios = response.audios;
+                                        }
+                                    );
+                                }
+
+                                audios.forEach(audio => {
+                                    if (this.currentTime > audio.start && this.currentTime < audio.start + 0.250) {
+                                        audioPlayer.pause();
+                                        audioPlayer.setAttribute('src', '/playAudio?start=' + audio.start);
+                                        audioPlayer.load();
+                                        audioPlayer.play();
+                                    }
+                                });
+                                document.getElementById("timer").innerHTML = this.currentTime;
+                            });
+                            console.log(response.audios[0]);
+                        }
+                    )
             });
-            console.log(response.audios[0]);
-        })
     };
 
     document.getElementById('get_video_button').addEventListener('click', function (e) {
-        getAudios(input.value);
+        getAudios(input.value, input_sub.value)
+
     });
 
     let filmsButtons = document.querySelectorAll('portfolio-item');
 
     filmsButtons.forEach((filmButton, index) => {
         filmButton.addEventListener('click', function (e) {
-            getAudios(filmsUrls[index]);
+            getAudios(filmsUrls[index], filmsSubs[index]);
         });
     });
 });

@@ -4,6 +4,7 @@ const app = express();
 
 const PORT = process.env.PORT;
 const YANDEX_TTS_API_KEY = process.env.YANDEX_TTS_API_KEY;
+const TRUE_BACKEND_URL = process.env.TRUE_BACKEND_URL;
 
 const fetch = require('node-fetch');
 const {URLSearchParams} = require('url');
@@ -43,6 +44,36 @@ app.get('/', (req, res) => {
     return res.redirect("index.html");
 });
 
+app.get('/startProcessVideo', (req, res) => {
+    const params = new URLSearchParams();
+    params.append('url', req.query.url);
+    params.append('srturl',  req.query.suburl);
+
+    fetch(TRUE_BACKEND_URL +'/process', {
+        method: 'get',
+    }).then(() => {
+        res.json({});
+    });
+});
+
+app.get('/loadAudio', (req, res) => {
+    const params = new URLSearchParams();
+    params.append('url', req.query.url);
+    params.append('start',  req.query.start);
+    params.append('end',  req.query.end);
+
+    fetch(TRUE_BACKEND_URL + '/download', {
+        method: 'get',
+    }).then(response => response.json()).then(response => {
+        Promise.all(response.audios.map(getAudio))
+            .then(result => {
+                res.json(response)
+            })
+            .catch(err => console.error(err));
+    });
+});
+
+
 app.get('/getAudios', (req, res) => {
     //Для нашего апи
     // const params = new URLSearchParams();
@@ -56,10 +87,11 @@ app.get('/getAudios', (req, res) => {
     //         'Authorization': 'Api-Key ' + api_key,
     //     },
     // });
+
     let url = req.query.url;
 
     var timestamps = require('./timestamps.json')
-    console.log('Timestamps:' + timestamps.audios[0].text);
+    console.log(timestamps);
 
     Promise.all(timestamps.audios.map(getAudio))
         .then(result => {
