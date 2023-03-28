@@ -6,14 +6,17 @@ services:
     ports:
       - "8081:8081"
 
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
   core:
     build:
       context: ./core/
       dockerfile: ./Dockerfile-core
     ports:
       - "8080:8080"
-
-  redis:
-    image: redis:alpine
-    ports:
-      - "6379:6379"
+    env_file: core.env
+    depends_on:
+      - redis
