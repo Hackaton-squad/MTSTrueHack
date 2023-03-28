@@ -29,6 +29,7 @@ var getAudio = function textToSpeech(audio) {
         },
     })
         .then(result => {
+            console.log(result);
             const dest = fs.createWriteStream('./public/media/' + audio.start + '.mp3');
             return pipeline(result.body, dest);
         })
