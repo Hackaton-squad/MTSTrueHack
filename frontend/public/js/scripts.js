@@ -60,8 +60,8 @@ window.addEventListener('DOMContentLoaded', event => {
         'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
         'https://storage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
         'https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
-        'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-        'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4'
+        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4',
+        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4'
     ];
     let filmsSubs = [
         '',
