@@ -69,7 +69,6 @@ def process_by_frames(path: str, callback, predict, metric, subtitle_path=None):
                 if belongs_to_interval(timestamp, intervals):
                     continue
 
-                # delete prompt on larger model
                 caption = predict(image, start_text=PROMPT)
                 if len(caption) > 0:
                     caption = caption[0]

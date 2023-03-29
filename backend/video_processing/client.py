@@ -6,7 +6,7 @@ from furl import furl
 
 def main_single(vid_path, server_url):
     predict_url = str(furl(server_url) / "process")
-    r = requests.post(predict_url, json={'url': vid_path})
+    r = requests.post(predict_url, json={'url': vid_path, 'subtitles': None})
     print(r.status_code)
 
 

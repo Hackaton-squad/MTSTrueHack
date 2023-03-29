@@ -60,15 +60,12 @@ def process(queue, server_url):
             if subtitles_file is not None:
                 os.remove(subtitles_file)
         except RetryableException as retr:
-            # error_msg = str(retr)
             print(retr)
             requests.post(status_url, json={'url': url, 'processing': Status.NOT_PROCESSED.value})
         except Exception as e:
-            # error_msg = str(e)
             print(e)
             requests.post(status_url, json={'url': url, 'processing': Status.NOT_PROCESSED.value})
         else:
-            pass
             requests.post(status_url, json={'url': url, 'processing': Status.PROCESSED.value})
 
 

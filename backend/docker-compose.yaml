@@ -2,6 +2,7 @@ version: "3"
 
 services:
   video_processing:
+    image: trrttrtrsrfewrwed/big_video_processing_bs
     build: video_processing
     ports:
       - "8081:8081"
@@ -13,6 +14,7 @@ services:
       - "6379:6379"
 
   core:
+    image: trrttrtrsrfewrwed/core
     build:
       context: ./core/
       dockerfile: ./Dockerfile-core
