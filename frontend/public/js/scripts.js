@@ -56,28 +56,28 @@ window.addEventListener('DOMContentLoaded', event => {
     let videoPlayer = document.getElementById("video");
     let audioPlayer = document.getElementById("audio");
     let filmsUrls = [
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4'
+        'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+        'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+        'https://storage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
+        'https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
+        'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+        'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4'
     ];
     let filmsSubs = [
-        'sub_url',
-        'sub_url',
-        'sub_url',
-        'sub_url',
-        'sub_url',
-        'sub_url'
+        '',
+        '',
+        '',
+        '',
+        '',
+        ''
     ];
     let getAudios = function getAudios(url, suburl) {
         fetch('/startProcessVideo?url=' + url + "&suburl=" + suburl)
             .then(() => {
-                fetch('/loadAudio?url=' + input.value + "&start=" + 0 + "&end=" + (-1))
+                fetch('/loadAudio?url=' + url + "&start=" + 0 + "&end=" + (-1))
                     .then(response => response.json())
                     .then(response => {
-                            videoPlayer.setAttribute('src', input.value);
+                            videoPlayer.setAttribute('src', url);
                             let audios = response.audios;
                             console.log(response.audios[0]);
                             videoPlayer.audios = audios
@@ -85,7 +85,7 @@ window.addEventListener('DOMContentLoaded', event => {
                             videoPlayer.addEventListener('timeupdate', function (evt) {
                                 if ((Math.ceil(this.currentTime * 4) % 10) === 0) {
                                     console.log("Query")
-                                    fetch('/loadAudio?url=' + input.value + "&start=" + 0 + "&end=" + (-1)).then(response => response.json()).then(
+                                    fetch('/loadAudio?url=' + url + "&start=" + 0 + "&end=" + (-1)).then(response => response.json()).then(
                                         response => {
                                             evt.currentTarget.audios = response.audios;
                                         }
@@ -130,11 +130,27 @@ window.addEventListener('DOMContentLoaded', event => {
         getAudios(input.value, input_sub.value)
     });
 
-    let filmsButtons = document.querySelectorAll('portfolio-item');
+    document.getElementById('portfolio-btn-1').addEventListener('click', function (e) {
+        getAudios(filmsUrls[0], filmsSubs[0])
+    });
 
-    filmsButtons.forEach((filmButton, index) => {
-        filmButton.addEventListener('click', function (e) {
-            getAudios(filmsUrls[index], filmsSubs[index]);
-        });
+    document.getElementById('portfolio-btn-2').addEventListener('click', function (e) {
+        getAudios(filmsUrls[1], filmsSubs[1])
+    });
+
+    document.getElementById('portfolio-btn-3').addEventListener('click', function (e) {
+        getAudios(filmsUrls[2], filmsSubs[2])
+    });
+
+    document.getElementById('portfolio-btn-4').addEventListener('click', function (e) {
+        getAudios(filmsUrls[3], filmsSubs[3])
+    });
+
+    document.getElementById('portfolio-btn-5').addEventListener('click', function (e) {
+        getAudios(filmsUrls[4], filmsSubs[4])
+    });
+
+    document.getElementById('portfolio-btn-6').addEventListener('click', function (e) {
+        getAudios(filmsUrls[5], filmsSubs[5])
     });
 });
