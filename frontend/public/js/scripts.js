@@ -37,7 +37,6 @@ window.addEventListener('DOMContentLoaded', event => {
             offset: 72,
         });
     }
-    ;
 
     // Collapse responsive navbar when toggler is visible
     const navbarToggler = document.body.querySelector('.navbar-toggler');
@@ -53,6 +52,7 @@ window.addEventListener('DOMContentLoaded', event => {
     });
 
     let input = document.getElementById('input_url');
+    let input_sub = document.getElementById('input_url_sub');
     let videoPlayer = document.getElementById("video");
     let audioPlayer = document.getElementById("audio");
     let filmsUrls = [
@@ -63,35 +63,78 @@ window.addEventListener('DOMContentLoaded', event => {
         'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
         'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4'
     ];
+    let filmsSubs = [
+        'sub_url',
+        'sub_url',
+        'sub_url',
+        'sub_url',
+        'sub_url',
+        'sub_url'
+    ];
+    let getAudios = function getAudios(url, suburl) {
+        fetch('/startProcessVideo?url=' + url + "&suburl=" + suburl)
+            .then(() => {
+                fetch('/loadAudio?url=' + input.value + "&start=" + 0 + "&end=" + (-1))
+                    .then(response => response.json())
+                    .then(response => {
+                            videoPlayer.setAttribute('src', input.value);
+                            let audios = response.audios;
+                            console.log(response.audios[0]);
+                            videoPlayer.audios = audios
+                            videoPlayer.counter = 0
+                            videoPlayer.addEventListener('timeupdate', function (evt) {
+                                if ((Math.ceil(this.currentTime * 4) % 10) === 0) {
+                                    console.log("Query")
+                                    fetch('/loadAudio?url=' + input.value + "&start=" + 0 + "&end=" + (-1)).then(response => response.json()).then(
+                                        response => {
+                                            evt.currentTarget.audios = response.audios;
+                                        }
+                                    );
+                                }
 
-    let getAudios = function getAudios(url) {
-        fetch('/getAudios?url=' + url).then(response => response.json()).then(response => {
-            videoPlayer.setAttribute('src', input.value);
-            let audios = response.audios;
-            videoPlayer.addEventListener('timeupdate', function () {
-                audios.forEach(audio => {
-                    if (this.currentTime > audio.start && this.currentTime < audio.start + 0.250) {
-                        audioPlayer.pause();
-                        audioPlayer.setAttribute('src', '/playAudio?start=' + audio.start);
-                        audioPlayer.load();
-                        audioPlayer.play();
-                    }
-                });
-                document.getElementById("timer").innerHTML = this.currentTime;
+                                evt.currentTarget.counter += 1
+                                evt.currentTarget.audios.forEach(audio => {
+
+                                    // console.log(Math.floor(this.currentTime * 100))
+                                    // console.log(Math.floor(audio.start / 1000) * 100)
+                                    // console.log(Math.floor(audio.start / 1000) * 100 + 25)
+                                    // console.log(Math.floor(this.currentTime * 100) >= Math.floor(audio.start / 1000) * 100)
+                                    // console.log(Math.floor(this.currentTime * 100) <= Math.floor(audio.start / 1000) * 100 + 25)
+                                    // console.log("")
+
+                                    let a = Math.floor(this.currentTime)
+                                    console.log(a)
+                                    console.log(Math.floor(audio.start / 1000))
+                                    console.log(a === Math.floor(audio.start / 1000))
+
+                                    if (a === Math.floor(audio.start / 1000)) {
+                                        audioPlayer.pause();
+                                        audioPlayer.setAttribute('src', '/playAudio?start=' + audio.start + '&text=' + audio.text);
+                                        audioPlayer.load();
+                                        audioPlayer.play();
+                                    }
+
+                                    // if (Math.floor(this.currentTime * 100) >= Math.floor(audio.start / 1000) * 100 && Math.floor(this.currentTime * 100) <=Math.floor(audio.start / 1000) * 100 + 25) {
+                                    //
+                                    // }
+                                });
+                                document.getElementById("timer").innerHTML = this.currentTime;
+                            });
+                            console.log(response.audios[0]);
+                        }
+                    )
             });
-            console.log(response.audios[0]);
-        })
     };
 
     document.getElementById('get_video_button').addEventListener('click', function (e) {
-        getAudios(input.value);
+        getAudios(input.value, input_sub.value)
     });
 
     let filmsButtons = document.querySelectorAll('portfolio-item');
 
     filmsButtons.forEach((filmButton, index) => {
         filmButton.addEventListener('click', function (e) {
-            getAudios(filmsUrls[index]);
+            getAudios(filmsUrls[index], filmsSubs[index]);
         });
     });
 });
