@@ -56,20 +56,20 @@ window.addEventListener('DOMContentLoaded', event => {
     let videoPlayer = document.getElementById("video");
     let audioPlayer = document.getElementById("audio");
     let filmsUrls = [
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4'
+        'https://storage.yandexcloud.net/mts-hackaton-backet/How%20I%20met%20your%20mother/S1SE1/How.I.Met.Your.Mother.s1.e01.Rus.%5BKuraj-Bambey.Ru%5D.mp4',
+        'https://storage.yandexcloud.net/mts-hackaton-backet/How%20I%20met%20your%20mother/S1SE2/How.I.Met.Your.Mother.s1.e02.Rus.%5BKuraj-Bambey.Ru%5D.mp4',
+        'https://storage.yandexcloud.net/mts-hackaton-backet/How%20I%20met%20your%20mother/S1SE3/How.I.Met.Your.Mother.s1.e03.Rus.%5BKuraj-Bambey.Ru%5D.mp4',
+        'https://storage.yandexcloud.net/mts-hackaton-backet/How%20I%20met%20your%20mother/S1SE4/How.I.Met.Your.Mother.s1.e04.Rus.%5BKuraj-Bambey.Ru%5D.mp4',
+        'https://storage.yandexcloud.net/mts-hackaton-backet/How%20I%20met%20your%20mother/S1SE4/How.I.Met.Your.Mother.s1.e04.Rus.%5BKuraj-Bambey.Ru%5D.mp4',
+        'https://storage.yandexcloud.net/mts-hackaton-backet/How%20I%20met%20your%20mother/S1SE6/How.I.Met.Your.Mother.s1.e06.Rus.%5BKuraj-Bambey.Ru%5D.mp4'
     ];
     let filmsSubs = [
-        'sub_url',
-        'sub_url',
-        'sub_url',
-        'sub_url',
-        'sub_url',
-        'sub_url'
+        'https://drive.google.com/uc?export=download&id=1vr_sz3WKSOQVyuqjpCWjt6lrOUYdMh3M',
+        'https://drive.google.com/uc?export=download&id=1h6Udpyb6cFfUxceo1Uq4g1yoWom9hliM',
+        'https://drive.google.com/uc?export=download&id=18hbklSUUfVo0GvYTW_Bqeze7hb-lJKUT',
+        'https://drive.google.com/uc?export=download&id=1wqAkp0D3gQ45oMSqbNrhcnx2nLpAssJr',
+        'https://drive.google.com/uc?export=download&id=1l7L66SQB-GkKj4lYGtgMT5vWdf9m6gDd',
+        'https://drive.google.com/uc?export=download&id=18-k2veEpbE-ETRTMWbUYN_PEgXMKHgwe'
     ];
     let getAudios = function getAudios(url, suburl) {
         fetch('/startProcessVideo?url=' + url + "&suburl=" + suburl)
@@ -128,6 +128,30 @@ window.addEventListener('DOMContentLoaded', event => {
 
     document.getElementById('get_video_button').addEventListener('click', function (e) {
         getAudios(input.value, input_sub.value)
+    });
+
+    document.getElementById('portfolio-btn-1').addEventListener('click', function (e) {
+        getAudios(filmsUrls[0], filmsSubs[0])
+    });
+
+    document.getElementById('portfolio-btn-2').addEventListener('click', function (e) {
+        getAudios(filmsUrls[1], filmsSubs[1])
+    });
+
+    document.getElementById('portfolio-btn-3').addEventListener('click', function (e) {
+        getAudios(filmsUrls[2], filmsSubs[2])
+    });
+
+    document.getElementById('portfolio-btn-4').addEventListener('click', function (e) {
+        getAudios(filmsUrls[3], filmsSubs[3])
+    });
+
+    document.getElementById('portfolio-btn-5').addEventListener('click', function (e) {
+        getAudios(filmsUrls[4], filmsSubs[4])
+    });
+
+    document.getElementById('portfolio-btn-6').addEventListener('click', function (e) {
+        getAudios(filmsUrls[5], filmsSubs[5])
     });
 
     let filmsButtons = document.querySelectorAll('portfolio-item');
