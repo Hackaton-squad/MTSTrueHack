@@ -56,28 +56,28 @@ window.addEventListener('DOMContentLoaded', event => {
     let videoPlayer = document.getElementById("video");
     let audioPlayer = document.getElementById("audio");
     let filmsUrls = [
-        'https://storage.yandexcloud.net/mts-hackaton-backet/How%20I%20met%20your%20mother/S1SE1/How.I.Met.Your.Mother.s1.e01.Rus.%5BKuraj-Bambey.Ru%5D.mp4',
-        'https://storage.yandexcloud.net/mts-hackaton-backet/How%20I%20met%20your%20mother/S1SE2/How.I.Met.Your.Mother.s1.e02.Rus.%5BKuraj-Bambey.Ru%5D.mp4',
-        'https://storage.yandexcloud.net/mts-hackaton-backet/How%20I%20met%20your%20mother/S1SE3/How.I.Met.Your.Mother.s1.e03.Rus.%5BKuraj-Bambey.Ru%5D.mp4',
-        'https://storage.yandexcloud.net/mts-hackaton-backet/How%20I%20met%20your%20mother/S1SE4/How.I.Met.Your.Mother.s1.e04.Rus.%5BKuraj-Bambey.Ru%5D.mp4',
-        'https://storage.yandexcloud.net/mts-hackaton-backet/How%20I%20met%20your%20mother/S1SE4/How.I.Met.Your.Mother.s1.e04.Rus.%5BKuraj-Bambey.Ru%5D.mp4',
-        'https://storage.yandexcloud.net/mts-hackaton-backet/How%20I%20met%20your%20mother/S1SE6/How.I.Met.Your.Mother.s1.e06.Rus.%5BKuraj-Bambey.Ru%5D.mp4'
+        'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+        'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+        'https://storage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
+        'https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
+        'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+        'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4'
     ];
     let filmsSubs = [
-        'https://drive.google.com/uc?export=download&id=1vr_sz3WKSOQVyuqjpCWjt6lrOUYdMh3M',
-        'https://drive.google.com/uc?export=download&id=1h6Udpyb6cFfUxceo1Uq4g1yoWom9hliM',
-        'https://drive.google.com/uc?export=download&id=18hbklSUUfVo0GvYTW_Bqeze7hb-lJKUT',
-        'https://drive.google.com/uc?export=download&id=1wqAkp0D3gQ45oMSqbNrhcnx2nLpAssJr',
-        'https://drive.google.com/uc?export=download&id=1l7L66SQB-GkKj4lYGtgMT5vWdf9m6gDd',
-        'https://drive.google.com/uc?export=download&id=18-k2veEpbE-ETRTMWbUYN_PEgXMKHgwe'
+        '',
+        '',
+        '',
+        '',
+        '',
+        ''
     ];
     let getAudios = function getAudios(url, suburl) {
         fetch('/startProcessVideo?url=' + url + "&suburl=" + suburl)
             .then(() => {
-                fetch('/loadAudio?url=' + input.value + "&start=" + 0 + "&end=" + (-1))
+                fetch('/loadAudio?url=' + url + "&start=" + 0 + "&end=" + (-1))
                     .then(response => response.json())
                     .then(response => {
-                            videoPlayer.setAttribute('src', input.value);
+                            videoPlayer.setAttribute('src', url);
                             let audios = response.audios;
                             console.log(response.audios[0]);
                             videoPlayer.audios = audios
@@ -85,7 +85,7 @@ window.addEventListener('DOMContentLoaded', event => {
                             videoPlayer.addEventListener('timeupdate', function (evt) {
                                 if ((Math.ceil(this.currentTime * 4) % 10) === 0) {
                                     console.log("Query")
-                                    fetch('/loadAudio?url=' + input.value + "&start=" + 0 + "&end=" + (-1)).then(response => response.json()).then(
+                                    fetch('/loadAudio?url=' + url + "&start=" + 0 + "&end=" + (-1)).then(response => response.json()).then(
                                         response => {
                                             evt.currentTarget.audios = response.audios;
                                         }
@@ -152,13 +152,5 @@ window.addEventListener('DOMContentLoaded', event => {
 
     document.getElementById('portfolio-btn-6').addEventListener('click', function (e) {
         getAudios(filmsUrls[5], filmsSubs[5])
-    });
-
-    let filmsButtons = document.querySelectorAll('portfolio-item');
-
-    filmsButtons.forEach((filmButton, index) => {
-        filmButton.addEventListener('click', function (e) {
-            getAudios(filmsUrls[index], filmsSubs[index]);
-        });
     });
 });
