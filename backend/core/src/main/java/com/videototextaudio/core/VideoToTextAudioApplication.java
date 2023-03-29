@@ -1,0 +1,14 @@
+package com.videototextaudio.core;
+
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+@OpenAPIDefinition
+public class VideoToTextAudioApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(VideoToTextAudioApplication.class, args);
+    }
+}
