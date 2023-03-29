@@ -83,14 +83,14 @@ window.addEventListener('DOMContentLoaded', event => {
                             videoPlayer.audios = audios
                             videoPlayer.counter = 0
                             videoPlayer.addEventListener('timeupdate', function (evt) {
-                                // if ((Math.ceil(this.currentTime * 4) % 10) === 0) {
-                                //     console.log("Query")
-                                //     fetch('/loadAudio?url=' + input.value + "&start=" + 0 + "&end=" + (-1)).then(response => response.json()).then(
-                                //         response => {
-                                //             evt.currentTarget.audios = response.audios;
-                                //         }
-                                //     );
-                                // }
+                                if ((Math.ceil(this.currentTime * 4) % 10) === 0) {
+                                    console.log("Query")
+                                    fetch('/loadAudio?url=' + input.value + "&start=" + 0 + "&end=" + (-1)).then(response => response.json()).then(
+                                        response => {
+                                            evt.currentTarget.audios = response.audios;
+                                        }
+                                    );
+                                }
 
                                 evt.currentTarget.counter += 1
                                 evt.currentTarget.audios.forEach(audio => {
@@ -109,7 +109,7 @@ window.addEventListener('DOMContentLoaded', event => {
 
                                     if (a === Math.floor(audio.start / 1000)) {
                                         audioPlayer.pause();
-                                        audioPlayer.setAttribute('src', '/playAudio?start=' + audio.start);
+                                        audioPlayer.setAttribute('src', '/playAudio?start=' + audio.start + '&text=' + audio.text);
                                         audioPlayer.load();
                                         audioPlayer.play();
                                     }
