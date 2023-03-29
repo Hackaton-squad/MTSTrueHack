@@ -10,6 +10,7 @@ const fetch = require('node-fetch');
 const {URLSearchParams} = require('url');
 const fs = require('fs');
 const {pipeline} = require('stream/promises');
+const {json} = require("express");
 
 var getAudio = function textToSpeech(audio) {
     const params = new URLSearchParams();
@@ -30,8 +31,8 @@ var getAudio = function textToSpeech(audio) {
         },
     })
         .then(result => {
-            console.log(result);
-            const dest = fs.createWriteStream('./public/media/' + audio.start + '.mp3');
+            // console.log(result);
+            const dest = fs.createWriteStream('./public/media/' + Math.floor(audio.start / 1000) + '.mp3');
             return pipeline(result.body, dest);
         })
         .catch(err => console.error(err));
@@ -46,25 +47,34 @@ app.get('/', (req, res) => {
 
 app.get('/startProcessVideo', (req, res) => {
     const params = new URLSearchParams();
-    params.append('url', req.query.url);
-    params.append('srturl',  req.query.suburl);
+    // params.append('url', req.query.url);
+    // params.append('srturl', req.query.suburl);
+    // params.append('hard', true);
 
     fetch(TRUE_BACKEND_URL +'/process', {
-        method: 'get',
+        method: 'post',
+        body: JSON.stringify({
+            'url' : req.query.url,
+            'srturl': req.query.suburl,
+            'hard': false,
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
     }).then(() => {
+        console.log("Послали")
         res.json({});
     });
 });
 
 app.get('/loadAudio', (req, res) => {
-    const params = new URLSearchParams();
-    params.append('url', req.query.url);
-    params.append('start',  req.query.start);
-    params.append('end',  req.query.end);
 
-    fetch(TRUE_BACKEND_URL + '/download', {
+    fetch(TRUE_BACKEND_URL + '/download?url=' + req.query.url + "&start=" + req.query.start + "&end=" + req.query.end + "&lang=RU", {
         method: 'get',
+        // params: params,
     }).then(response => response.json()).then(response => {
+        console.log("Response:", response)
+
         Promise.all(response.audios.map(getAudio))
             .then(result => {
                 res.json(response)

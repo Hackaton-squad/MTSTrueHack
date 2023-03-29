@@ -75,26 +75,48 @@ window.addEventListener('DOMContentLoaded', event => {
         fetch('/startProcessVideo?url=' + url + "&suburl=" + suburl)
             .then(() => {
                 fetch('/loadAudio?url=' + input.value + "&start=" + 0 + "&end=" + (-1))
+                    .then(response => response.json())
                     .then(response => {
                             videoPlayer.setAttribute('src', input.value);
                             let audios = response.audios;
+                            console.log(response.audios[0]);
+                            videoPlayer.audios = audios
+                            videoPlayer.counter = 0
+                            videoPlayer.addEventListener('timeupdate', function (evt) {
+                                // if ((Math.ceil(this.currentTime * 4) % 10) === 0) {
+                                //     console.log("Query")
+                                //     fetch('/loadAudio?url=' + input.value + "&start=" + 0 + "&end=" + (-1)).then(response => response.json()).then(
+                                //         response => {
+                                //             evt.currentTarget.audios = response.audios;
+                                //         }
+                                //     );
+                                // }
 
-                            videoPlayer.addEventListener('timeupdate', function () {
-                                if (Math.round(this.currentTime) % 10 === 0) {
-                                    fetch('/loadAudio?url=' + input.value + "&start=" + 0 + "&end=" + (-1)).then(
-                                        response => {
-                                            audios = response.audios;
-                                        }
-                                    );
-                                }
+                                evt.currentTarget.counter += 1
+                                evt.currentTarget.audios.forEach(audio => {
 
-                                audios.forEach(audio => {
-                                    if (this.currentTime > audio.start && this.currentTime < audio.start + 0.250) {
+                                    // console.log(Math.floor(this.currentTime * 100))
+                                    // console.log(Math.floor(audio.start / 1000) * 100)
+                                    // console.log(Math.floor(audio.start / 1000) * 100 + 25)
+                                    // console.log(Math.floor(this.currentTime * 100) >= Math.floor(audio.start / 1000) * 100)
+                                    // console.log(Math.floor(this.currentTime * 100) <= Math.floor(audio.start / 1000) * 100 + 25)
+                                    // console.log("")
+
+                                    let a = Math.floor(this.currentTime)
+                                    console.log(a)
+                                    console.log(Math.floor(audio.start / 1000))
+                                    console.log(a === Math.floor(audio.start / 1000))
+
+                                    if (a === Math.floor(audio.start / 1000)) {
                                         audioPlayer.pause();
                                         audioPlayer.setAttribute('src', '/playAudio?start=' + audio.start);
                                         audioPlayer.load();
                                         audioPlayer.play();
                                     }
+
+                                    // if (Math.floor(this.currentTime * 100) >= Math.floor(audio.start / 1000) * 100 && Math.floor(this.currentTime * 100) <=Math.floor(audio.start / 1000) * 100 + 25) {
+                                    //
+                                    // }
                                 });
                                 document.getElementById("timer").innerHTML = this.currentTime;
                             });
@@ -106,7 +128,6 @@ window.addEventListener('DOMContentLoaded', event => {
 
     document.getElementById('get_video_button').addEventListener('click', function (e) {
         getAudios(input.value, input_sub.value)
-
     });
 
     let filmsButtons = document.querySelectorAll('portfolio-item');
